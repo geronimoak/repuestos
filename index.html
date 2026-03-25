@@ -236,6 +236,88 @@ td.nprod span{background:var(--surface2);border:1px solid var(--border);border-r
 .add-user-form input:focus{border-color:var(--accent);}
 .add-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;min-height:40px;}
 .admin-msg{font-size:12px;margin-top:8px;display:none;}
+/* ── AUTOCOMPLETE ── */
+.autocomplete-box{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.6);overflow:hidden;z-index:500;display:none;max-height:280px;overflow-y:auto;}
+.autocomplete-box.open{display:block;}
+.ac-item{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;transition:background .1s;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover,.ac-item.focused{background:var(--accent-light);}
+.ac-item svg{color:var(--text-dim);flex-shrink:0;}
+.ac-item-text{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ac-item-rubro{font-size:10px;color:var(--text-dim);flex-shrink:0;}
+.ac-section{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);padding:8px 16px 4px;background:var(--surface2);}
+.hero-search-relative{position:relative;width:100%;}
+
+/* ── HISTORIAL ── */
+.ac-history-clear{display:block;width:100%;text-align:center;padding:8px;font-size:11px;color:var(--text-muted);background:none;border:none;border-top:1px solid var(--border);cursor:pointer;}
+.ac-history-clear:hover{color:var(--stock-no);}
+
+/* ── ORDENAMIENTO ── */
+#sortBar{padding:6px 16px;background:var(--bg);border-bottom:1px solid var(--border);display:none;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none;}
+#sortBar::-webkit-scrollbar{display:none;}
+#sortBar::-webkit-scrollbar{display:none;}
+.sort-label{font-size:11px;color:var(--text-dim);white-space:nowrap;flex-shrink:0;}
+.sort-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap;min-height:32px;}
+.sort-btn:hover{border-color:var(--accent);color:var(--accent);}
+.sort-btn.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent);}
+
+/* ── CONTADOR ANIMADO ── */
+@keyframes countPop{0%{transform:scale(.85);opacity:.6;}60%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
+.count-anim{animation:countPop .25s ease;}
+
+/* ── SIN RESULTADOS INTELIGENTE ── */
+.no-results-box{padding:40px 24px;text-align:center;max-width:480px;margin:0 auto;}
+.no-results-icon{font-size:44px;margin-bottom:12px;}
+.no-results-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.no-results-sub{font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.5;}
+.no-results-suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.no-results-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+.no-results-chip:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── COMPARTIR ── */
+.share-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:999;transition:transform .3s;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.share-toast.show{transform:translateX(-50%) translateY(0);}
+.share-btn{position:absolute;top:8px;right:40px;background:rgba(255,255,255,.15);border:none;border-radius:20px;color:rgba(255,255,255,.8);font-size:11px;font-weight:600;padding:4px 10px;cursor:pointer;transition:all .15s;backdrop-filter:blur(4px);}
+.share-btn:hover{background:rgba(255,255,255,.25);color:#fff;}
+
+/* ── VISTA DETALLE INTERMEDIA ── */
+#detailOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:350;align-items:flex-end;justify-content:center;}
+#detailOverlay.open{display:flex;}
+.detail-sheet{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:88svh;display:flex;flex-direction:column;animation:sheetUp .28s cubic-bezier(.32,.72,0,1);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px);}
+.detail-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 4px;}
+.detail-head{display:flex;gap:14px;padding:12px 20px 16px;border-bottom:1px solid var(--border);}
+.detail-img{width:100px;height:100px;flex-shrink:0;border-radius:10px;overflow:hidden;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
+.detail-img img{width:100%;height:100%;object-fit:contain;}
+.detail-img-ph{font-size:28px;color:var(--text-dim);}
+.detail-info{flex:1;min-width:0;}
+.detail-rubro{font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.detail-desc{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);line-height:1.25;margin-bottom:6px;}
+.detail-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.detail-tag{font-size:11px;padding:3px 8px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);}
+.detail-body{padding:14px 20px;overflow-y:auto;flex:1;}
+.detail-section-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;}
+.detail-full-desc{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:16px;background:var(--surface2);border-radius:8px;padding:12px;}
+.detail-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:10px;}
+.detail-wa-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#25d366;color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .2s;}
+.detail-wa-btn:hover{background:#1da851;}
+.detail-story-btn{padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;background:none;color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.detail-story-btn:hover{border-color:var(--accent);color:var(--accent);}
+.detail-close{position:absolute;top:12px;right:16px;background:var(--surface2);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;}
+
+/* ── SKELETON ── */
+.skeleton{animation:shimmer 1.4s infinite linear;background:linear-gradient(90deg,var(--surface2) 25%,#e8eaed 50%,var(--surface2) 75%);background-size:200% 100%;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.sk-card{background:var(--surface);border-radius:12px;border:1px solid var(--border);overflow:hidden;}
+.sk-img{width:100%;aspect-ratio:1;}.sk-line{height:10px;border-radius:4px;margin:6px 10px;}
+.sk-line.short{width:50%;}
+
+/* ── MODO SIN IMÁGENES ── */
+.no-img-mode .pub-card-img img{display:none!important;}
+.no-img-mode .pub-card-img{aspect-ratio:auto;height:32px;background:var(--accent-light);}
+.no-img-mode .pub-card-img .no-img{font-size:14px;}
+.img-toggle{font-size:11px;color:var(--text-dim);cursor:pointer;padding:4px 8px;border:1px solid var(--border);border-radius:20px;background:none;transition:all .15s;white-space:nowrap;}
+.img-toggle:hover{border-color:var(--accent);color:var(--accent);}
+
 </style>
 </head>
 <body>
@@ -266,10 +348,13 @@ td.nprod span{background:var(--surface2);border:1px solid var(--border);border-r
         <img class="hero-logo" src="public/assets/images/logo_principal.png" alt="Logo" onerror="this.style.display='none';document.getElementById('heroFb').style.display='block'">
         <div class="hero-logo-fallback" id="heroFb">REPUESTOS PRO</div>
         <div class="hero-search-wrap">
+          <div class="hero-search-relative">
           <div class="hero-text-row">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             <input type="search" id="heroSearch" placeholder="Buscar repuesto, marca, modelo..." autocomplete="off" inputmode="search">
             <button class="hero-search-btn" onclick="ejecutarBusqueda()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+          </div>
+          <div class="autocomplete-box" id="acBox"></div>
           </div>
           <div class="hero-divider"></div>
           <div class="hero-rubro-row" onclick="openPicker()">
@@ -295,7 +380,7 @@ td.nprod span{background:var(--surface2);border:1px solid var(--border);border-r
       </div>
       <div id="activePills"><div class="pills-inner" id="pillsList"></div></div>
       <div id="chipBar"><div id="chipList"></div></div>
-      <div id="pubInfoBar"></div>
+      <div id="sortBar"><span class="sort-label">Ordenar:</span><button class="sort-btn active" onclick="setSort('rel')" id="sRel">Relevancia</button><button class="sort-btn" onclick="setSort('az')" id="sAz">A → Z</button><button class="sort-btn" onclick="setSort('prods')" id="sProds">Más productos</button><button class="img-toggle" id="imgToggle" onclick="toggleImgMode()">📷 Ocultar imágenes</button></div><div id="pubInfoBar"></div>
       <div id="pubEstado" style="display:none"></div>
       <div id="pubGrid"></div>
       <div class="pagination" id="pubPag"></div>
@@ -348,6 +433,29 @@ td.nprod span{background:var(--surface2);border:1px solid var(--border);border-r
     <div class="picker-list" id="pickerList"></div>
   </div>
 </div>
+<div id="detailOverlay">
+  <div class="detail-sheet" id="detailSheet">
+    <div class="detail-handle"></div>
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <div class="detail-head">
+      <div class="detail-img" id="dImg"><div class="detail-img-ph">📦</div></div>
+      <div class="detail-info">
+        <div class="detail-rubro" id="dRubro"></div>
+        <div class="detail-desc" id="dDesc"></div>
+        <div class="detail-tags" id="dTags"></div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-section-title">Descripción completa</div>
+      <div class="detail-full-desc" id="dFullDesc"></div>
+    </div>
+    <div class="detail-footer">
+      <a class="detail-wa-btn" id="dWa" href="#" target="_blank"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.528 5.855L.057 23.883l6.206-1.448A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.65-.502-5.178-1.381l-.371-.219-3.684.859.896-3.574-.242-.389A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>WhatsApp</a>
+      <button class="detail-story-btn" id="dStoryBtn" onclick="openStoryFromDetail()">📸 Card WA</button>
+    </div>
+  </div>
+</div>
+<div class="share-toast" id="shareToast">🔗 Link copiado</div>
 <div id="storyOverlay">
   <div class="story-wrap">
     <button class="story-close" onclick="closeStory()">✕</button>
@@ -439,7 +547,7 @@ async function cargarDatos(){
     allData=indice.map(row=>({codigo:(row['Codigo']||'').trim(),descripcion:(row['Descripcion']||'').trim(),marca:(row['Marca']||'').trim(),modelo:(row['Modelo']||'').trim(),rubro:(row['RUBRO']||'').trim(),linea:(row['LINEA']||'').trim(),imagen:(row['IMAGEN']||'').trim(),buscables:(row['BUSCABLES']||'').trim(),productos:revMap[(row['Codigo']||'').trim()]||[]})).filter(r=>r.codigo);
     allRubros=[...new Set(allData.map(r=>r.rubro).filter(r=>r&&r!=='nan'))].sort();
     ldStep(100,'¡Listo!');
-    setTimeout(()=>{const ld=document.getElementById('loader');ld.classList.add('fade');setTimeout(()=>ld.style.display='none',400);document.getElementById('app').style.display='block';buildPicker();},300);
+    setTimeout(()=>{const ld=document.getElementById('loader');ld.classList.add('fade');setTimeout(()=>ld.style.display='none',400);document.getElementById('app').style.display='block';buildPicker();checkURLParams();},300);
   }catch(e){document.getElementById('loaderError').textContent='Error: '+e.message;document.getElementById('loaderError').style.display='block';}
 }
 async function recargarDatos(){
@@ -519,6 +627,8 @@ document.getElementById('pubSearchInput').addEventListener('input',function(){
 function ejecutarBusqueda(){
   const q=document.getElementById('heroSearch').value.trim();
   if(!q&&!selectedRubro)return;
+  if(q)addHistory(q);
+  closeAC();
   document.getElementById('pubSearchInput').value=q;
   document.getElementById('pubClear').style.display=q?'block':'none';
   document.getElementById('hero').style.display='none';
@@ -538,8 +648,13 @@ function applyPubFilters(){
   renderChips(topMarcas,marcaCount);
   if(pubChips.length)base=base.filter(item=>pubChips.includes(item.marca));
   pubFiltered=base;pubPage=0;
-  renderActivePills(q);renderPubGrid();renderPubPag();
-  document.getElementById('pubInfoBar').textContent=pubFiltered.length?`${pubFiltered.length.toLocaleString('es')} resultado${pubFiltered.length!==1?'s':''}${pubChips.length||selectedRubro?' · filtrado':''}`:' ';
+  if(currentSort!=='rel')sortAndRender();
+  else{renderPubGrid();renderPubPag();}
+  renderActivePills(q);
+  document.getElementById('sortBar').style.display=pubFiltered.length?'flex':'none';
+  const infoEl=document.getElementById('pubInfoBar');
+  infoEl.textContent=pubFiltered.length?`${pubFiltered.length.toLocaleString('es')} resultado${pubFiltered.length!==1?'s':''}${pubChips.length||selectedRubro?' · filtrado':''}`:' ';
+  animateCount(infoEl);
 }
 function renderActivePills(q){
   const container=document.getElementById('activePills'),list=document.getElementById('pillsList');
@@ -564,13 +679,13 @@ function toggleChip(m){const idx=pubChips.indexOf(m);if(idx>-1)pubChips.splice(i
 function renderPubGrid(){
   const grid=document.getElementById('pubGrid'),estado=document.getElementById('pubEstado');
   const slice=pubFiltered.slice(pubPage*PUB_PAGE,(pubPage+1)*PUB_PAGE);
-  if(!pubFiltered.length){grid.innerHTML='';estado.style.display='block';estado.innerHTML='<div class="pub-empty"><div class="pub-empty-icon">🔍</div><p>Sin resultados. Probá con otras palabras o categorías.</p></div>';return;}
+  if(!pubFiltered.length){grid.innerHTML='';estado.style.display='block';const q=document.getElementById('pubSearchInput').value.trim();estado.innerHTML=renderNoResults(q);return;}
   estado.style.display='none';
   grid.innerHTML=slice.map(item=>{
     const imgUrl=item.imagen&&item.imagen!=='nan'?IMAGEN_MAP[item.imagen]:null;
     const imgHtml=imgUrl?`<img src="${imgUrl}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="no-img" style="display:none">📦</div>`:`<div class="no-img">📦</div>`;
     const d=JSON.stringify(item).replace(/"/g,'&quot;');
-    return `<div class="pub-card" onclick="openStory(this)" data-item="${d}"><div class="pub-card-img">${imgHtml}</div><div class="pub-card-body"><div class="pub-card-rubro">${esc(item.rubro)}</div><div class="pub-card-desc">${esc(item.descripcion)}</div><div class="pub-card-marca">${esc(item.marca)}</div></div></div>`;
+    return `<div class="pub-card" onclick="openDetail(JSON.parse(this.dataset.item))" data-item="${d}"><div class="pub-card-img">${imgHtml}</div><div class="pub-card-body"><div class="pub-card-rubro">${esc(item.rubro)}</div><div class="pub-card-desc">${esc(item.descripcion)}</div><div class="pub-card-marca">${esc(item.marca)}</div></div></div>`;
   }).join('');
 }
 function renderPubPag(){
@@ -584,7 +699,7 @@ function renderPubPag(){
 function pubGoPage(p){pubPage=p;window.scrollTo(0,0);renderPubGrid();renderPubPag();}
 let currentStoryItem=null;
 function openStory(el){
-  const item=JSON.parse(el.dataset.item);currentStoryItem=item;
+  const item=el.dataset?JSON.parse(el.dataset.item):el;currentStoryItem=item;
   const imgUrl=item.imagen&&item.imagen!=='nan'?IMAGEN_MAP[item.imagen]:null;
   const img=document.getElementById('storyImg'),ph=document.getElementById('storyImgPh');
   if(imgUrl){img.src=imgUrl;img.style.display='block';ph.style.display='none';}else{img.style.display='none';ph.style.display='flex';}
@@ -666,7 +781,205 @@ function addUser(){const u=document.getElementById('newUser').value.trim(),p=doc
 function delUser(i){const users=getUsers();const n=users[i].u;users.splice(i,1);saveUsers(users);renderUserList();showAdminMsg(`"${n}" eliminado`,'var(--text-muted)');}
 function showAdminMsg(t,c){const el=document.getElementById('adminMsg');el.textContent=t;el.style.color=c;el.style.display='block';setTimeout(()=>el.style.display='none',3000);}
 function buildRange(cur,total){const r=[0];if(cur>2)r.push('...');for(let i=Math.max(1,cur-1);i<=Math.min(total-2,cur+1);i++)r.push(i);if(cur<total-3)r.push('...');r.push(total-1);return r;}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeStory();closeAdmin();closePicker();closeLogin();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeStory();closeAdmin();closePicker();closeLogin();closeDetail();closeAC();}});
+
+// ══════════════════════════════════════════════
+// HISTORIAL DE BÚSQUEDAS
+// ══════════════════════════════════════════════
+function getHistory(){try{return JSON.parse(localStorage.getItem('rp_history')||'[]');}catch{return[];}}
+function addHistory(q){if(!q||q.length<2)return;let h=getHistory().filter(x=>x!==q).slice(0,4);h.unshift(q);localStorage.setItem('rp_history',JSON.stringify(h));}
+function clearHistory(){localStorage.removeItem('rp_history');closeAC();}
+
+// ══════════════════════════════════════════════
+// AUTOCOMPLETADO
+// ══════════════════════════════════════════════
+let acFocusIdx=-1;
+
+function openAC(){document.getElementById('acBox').classList.add('open');}
+function closeAC(){document.getElementById('acBox').classList.remove('open');acFocusIdx=-1;}
+
+function renderAC(q){
+  const box=document.getElementById('acBox');
+  if(!allData.length){closeAC();return;}
+  const qn=norm(q);
+  let html='';
+
+  if(!q){
+    const hist=getHistory();
+    if(hist.length){
+      html+=`<div class="ac-section">Búsquedas recientes</div>`;
+      html+=hist.map(t=>`<div class="ac-item" onclick="selectAC('${esc(t)}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="ac-item-text">${esc(t)}</span></div>`).join('');
+      html+=`<button class="ac-history-clear" onclick="clearHistory()">Borrar historial</button>`;
+      box.innerHTML=html;openAC();return;
+    }
+    closeAC();return;
+  }
+
+  // Sugerencias de descripciones
+  const matches=[];
+  const seen=new Set();
+  for(const item of allData){
+    if(matches.length>=6)break;
+    const d=item.descripcion;
+    if(norm(d).includes(qn)&&!seen.has(d)){seen.add(d);matches.push(item);}
+  }
+  if(!matches.length){closeAC();return;}
+  html+=`<div class="ac-section">Sugerencias</div>`;
+  html+=matches.map(item=>`<div class="ac-item" onclick="selectAC('${esc(item.descripcion.substring(0,60))}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span class="ac-item-text">${esc(item.descripcion)}</span><span class="ac-item-rubro">${esc(item.rubro)}</span></div>`).join('');
+  box.innerHTML=html;openAC();
+}
+
+function selectAC(val){
+  document.getElementById('heroSearch').value=val;
+  closeAC();
+  ejecutarBusqueda();
+}
+
+// Keyboard nav en autocomplete
+document.getElementById('heroSearch').addEventListener('keydown',function(e){
+  const items=document.querySelectorAll('#acBox .ac-item');
+  if(e.key==='ArrowDown'){e.preventDefault();acFocusIdx=Math.min(acFocusIdx+1,items.length-1);items.forEach((el,i)=>el.classList.toggle('focused',i===acFocusIdx));}
+  else if(e.key==='ArrowUp'){e.preventDefault();acFocusIdx=Math.max(acFocusIdx-1,-1);items.forEach((el,i)=>el.classList.toggle('focused',i===acFocusIdx));}
+  else if(e.key==='Enter'){if(acFocusIdx>=0&&items[acFocusIdx]){items[acFocusIdx].click();return;}}
+  else if(e.key==='Escape'){closeAC();}
+});
+document.getElementById('heroSearch').addEventListener('input',function(){renderAC(this.value);});
+document.getElementById('heroSearch').addEventListener('focus',function(){renderAC(this.value);});
+document.addEventListener('click',function(e){if(!e.target.closest('.hero-search-relative'))closeAC();});
+
+// ══════════════════════════════════════════════
+// ORDENAMIENTO
+// ══════════════════════════════════════════════
+let currentSort='rel';
+function setSort(s){
+  currentSort=s;
+  ['rel','az','prods'].forEach(k=>{
+    const btn=document.getElementById('s'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(btn)btn.classList.toggle('active',k===s);
+  });
+  sortAndRender();
+}
+function sortAndRender(){
+  if(currentSort==='az')pubFiltered=[...pubFiltered].sort((a,b)=>a.descripcion.localeCompare(b.descripcion));
+  else if(currentSort==='prods')pubFiltered=[...pubFiltered].sort((a,b)=>b.productos.length-a.productos.length);
+  pubPage=0;renderPubGrid();renderPubPag();
+}
+
+// ══════════════════════════════════════════════
+// CONTADOR ANIMADO
+// ══════════════════════════════════════════════
+function animateCount(el){el.classList.remove('count-anim');void el.offsetWidth;el.classList.add('count-anim');}
+
+// ══════════════════════════════════════════════
+// TOGGLE IMÁGENES
+// ══════════════════════════════════════════════
+let imgMode=true;
+function toggleImgMode(){
+  imgMode=!imgMode;
+  const grid=document.getElementById('pubGrid');
+  const btn=document.getElementById('imgToggle');
+  grid.classList.toggle('no-img-mode',!imgMode);
+  btn.textContent=imgMode?'📷 Ocultar imágenes':'📷 Mostrar imágenes';
+}
+
+// ══════════════════════════════════════════════
+// COMPARTIR PRODUCTO
+// ══════════════════════════════════════════════
+function shareItem(codigo){
+  const url=window.location.origin+window.location.pathname+'?q='+encodeURIComponent(codigo);
+  if(navigator.clipboard){navigator.clipboard.writeText(url);}
+  else{const ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
+  const toast=document.getElementById('shareToast');
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2200);
+}
+
+// Leer parámetro ?q= al cargar
+function checkURLParams(){
+  const params=new URLSearchParams(window.location.search);
+  const q=params.get('q');
+  if(q){
+    document.getElementById('heroSearch').value=q;
+    document.getElementById('pubSearchInput').value=q;
+    document.getElementById('pubClear').style.display='block';
+    document.getElementById('hero').style.display='none';
+    document.getElementById('pubResultados').style.display='block';
+    pubChips=[];applyPubFilters();
+  }
+}
+
+// ══════════════════════════════════════════════
+// VISTA DETALLE INTERMEDIA
+// ══════════════════════════════════════════════
+let detailItem=null;
+
+function openDetail(item){
+  detailItem=item;
+  const imgUrl=item.imagen&&item.imagen!=='nan'?IMAGEN_MAP[item.imagen]:null;
+  const dImg=document.getElementById('dImg');
+  dImg.innerHTML=imgUrl?`<img src="${imgUrl}" alt="" onerror="this.parentElement.innerHTML='<div class=\'detail-img-ph\'>📦</div>'">`:'<div class="detail-img-ph">📦</div>';
+  document.getElementById('dRubro').textContent=item.rubro||'';
+  document.getElementById('dDesc').textContent=item.descripcion||'';
+  document.getElementById('dFullDesc').textContent=item.descripcion||'';
+  const tags=[];
+  if(item.marca&&item.marca!=='nan')tags.push(item.marca);
+  if(item.modelo&&item.modelo!=='nan')tags.push(item.modelo);
+  if(item.linea&&item.linea!=='nan')tags.push(item.linea);
+  document.getElementById('dTags').innerHTML=tags.map(t=>`<span class="detail-tag">${esc(t)}</span>`).join('')+
+    `<button style="margin-left:auto;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:20px;" onclick="shareItem('${esc(item.codigo)}')">🔗 Compartir</button>`;
+  const msg=encodeURIComponent(`Hola! Consulto por: ${item.descripcion} (${item.codigo})`);
+  document.getElementById('dWa').href=`https://wa.me/${WA_NUMBER}?text=${msg}`;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function closeDetail(){
+  document.getElementById('detailOverlay').classList.remove('open');
+  detailItem=null;
+}
+
+function openStoryFromDetail(){
+  closeDetail();
+  if(detailItem){
+    // Simular click en card
+    const fake={dataset:{item:JSON.stringify(detailItem)}};
+    openStory(fake);
+  }
+}
+
+document.getElementById('detailOverlay').addEventListener('click',function(e){
+  if(e.target===this)closeDetail();
+});
+
+// ══════════════════════════════════════════════
+// SIN RESULTADOS INTELIGENTE
+// ══════════════════════════════════════════════
+function renderNoResults(q){
+  // Sugerir rubros con resultados parciales
+  const qn=norm(q);
+  const rubroSugs=[];
+  if(q){
+    const counts={};
+    allData.forEach(item=>{
+      const h2=norm(item.descripcion+' '+item.marca+' '+item.rubro);
+      if(h2.includes(qn.split(' ')[0]))counts[item.rubro]=(counts[item.rubro]||0)+1;
+    });
+    Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([r])=>rubroSugs.push(r));
+  }
+  return `<div class="no-results-box">
+    <div class="no-results-icon">🔍</div>
+    <div class="no-results-title">Sin resultados</div>
+    <div class="no-results-sub">No encontramos "${esc(q)}" en el catálogo.<br>Probá con otras palabras o explorá por categoría.</div>
+    ${rubroSugs.length?`<div style="margin-bottom:10px;font-size:12px;color:var(--text-muted)">Quizás estás buscando en:</div><div class="no-results-suggestions">${rubroSugs.map(r=>`<button class="no-results-chip" onclick="selectRubroAndSearch('${esc(r)}')">${esc(r)}</button>`).join('')}</div>`:''}
+  </div>`;
+}
+
+function selectRubroAndSearch(r){
+  selectRubro(r);
+  document.getElementById('pubSearchInput').value='';
+  pubChips=[];applyPubFilters();
+}
+
+
 cargarDatos();
 </script>
 </body>
