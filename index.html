@@ -1521,23 +1521,49 @@ function addItemFromDetail(){
 
 
 // ══════════════════════════════════════════════
-// ANALYTICS TRACKER (localStorage)
+// ANALYTICS TRACKER — Google Sheets via Apps Script
 // ══════════════════════════════════════════════
-const ANALYTICS_KEY = 'rp_analytics';
+const ANALYTICS_URL = 'https://script.google.com/macros/s/AKfycbz1RCJMq2q6ITIXROBhu3zvL4EZnOF6lfEwjYRI0CXg4t6WPGCXc_J7h2m_OFwyHRYW/exec';
 
-function getAnalytics(){
-  try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'{"events":[]}');}
-  catch{return {events:[]};}
+// Session ID único por visita (no persiste entre sesiones)
+const SESSION_ID = Math.random().toString(36).substring(2,10);
+
+// Cola para no bloquear la UI y reintentar si falla
+const eventQueue = [];
+let sending = false;
+
+async function flushQueue(){
+  if(sending||!eventQueue.length)return;
+  sending=true;
+  const batch=eventQueue.splice(0,5); // enviar de a 5
+  for(const evt of batch){
+    try{
+      await fetch(ANALYTICS_URL,{
+        method:'POST',
+        body:JSON.stringify(evt),
+        headers:{'Content-Type':'application/json'}
+      });
+    }catch(e){
+      // Si falla, reinsertar al frente
+      eventQueue.unshift(evt);
+      break;
+    }
+  }
+  sending=false;
+  if(eventQueue.length)setTimeout(flushQueue,2000);
 }
-function saveAnalytics(data){
-  // Mantener max 2000 eventos
-  if(data.events.length>2000)data.events=data.events.slice(-2000);
-  localStorage.setItem(ANALYTICS_KEY,JSON.stringify(data));
-}
+
 function trackEvent(type,data){
-  const analytics=getAnalytics();
-  analytics.events.push({t:type,d:data,ts:Date.now()});
-  saveAnalytics(analytics);
+  eventQueue.push({
+    type,
+    query: data.q||data.query||'',
+    rubro: data.rubro||'',
+    codigo: data.codigo||'',
+    descripcion: data.desc||data.descripcion||'',
+    session_id: SESSION_ID,
+    user_agent: navigator.userAgent.substring(0,80)
+  });
+  setTimeout(flushQueue,300);
 }
 
 // Track visita al cargar
@@ -1550,7 +1576,7 @@ function trackSearch(q,rubro){
 
 // Track producto visto
 function trackProductView(codigo,descripcion,rubro){
-  trackEvent('view',{codigo,desc:descripcion.substring(0,40),rubro});
+  trackEvent('view',{codigo,desc:descripcion.substring(0,60),rubro});
 }
 
 // Track presupuesto
@@ -1577,58 +1603,89 @@ function setPeriod(p){
   renderDashAnalytics();
 }
 
-function getFilteredEvents(type){
-  const all=getAnalytics().events;
-  const now=Date.now();
-  const cutoffs={today:86400000,'7d':604800000,'30d':2592000000,all:Infinity};
-  const cutoff=cutoffs[dashPeriod]||Infinity;
-  return all.filter(e=>e.t===type&&(now-e.ts)<=cutoff);
-}
+// getFilteredEvents ya no se usa — los eventos vienen del servidor
+// Se mantiene como fallback vacío para compatibilidad
+function getFilteredEvents(type){ return []; }
 
-function renderDashAnalytics(){
+// Cache de eventos cargados desde el servidor
+let analyticsCache = null;
+
+async function renderDashAnalytics(){
+  // Mostrar loading en KPIs
+  ['kpiVisits','kpiSearches','kpiViewed','kpiBudgets'].forEach(id=>{
+    document.getElementById(id).textContent='…';
+  });
+
+  try{
+    const res = await fetch(`${ANALYTICS_URL}?action=read&period=${dashPeriod}`);
+    const data = await res.json();
+    analyticsCache = data.events || [];
+  }catch(e){
+    console.warn('Analytics fetch error:', e);
+    analyticsCache = [];
+  }
+
+  const events = analyticsCache;
+  const visits  = events.filter(e=>e.type==='visit');
+  const searches= events.filter(e=>e.type==='search');
+  const views   = events.filter(e=>e.type==='view');
+  const budgets = events.filter(e=>e.type==='budget');
+
   // KPIs
-  const visits=getFilteredEvents('visit');
-  const searches=getFilteredEvents('search');
-  const views=getFilteredEvents('view');
-  const budgets=getFilteredEvents('budget');
+  document.getElementById('kpiVisits').textContent   = visits.length.toLocaleString('es');
+  document.getElementById('kpiSearches').textContent  = searches.length.toLocaleString('es');
+  document.getElementById('kpiViewed').textContent    = views.length.toLocaleString('es');
+  document.getElementById('kpiBudgets').textContent   = budgets.length.toLocaleString('es');
 
-  document.getElementById('kpiVisits').textContent=visits.length.toLocaleString('es');
-  document.getElementById('kpiSearches').textContent=searches.length.toLocaleString('es');
-  document.getElementById('kpiViewed').textContent=views.length.toLocaleString('es');
-  document.getElementById('kpiBudgets').textContent=budgets.length.toLocaleString('es');
+  // Usuarios únicos (por session_id)
+  const uniqueSessions = new Set(events.map(e=>e.session_id).filter(Boolean)).size;
 
-  // Keywords
+  // Keywords más buscadas
   const kwCount={};
   searches.forEach(e=>{
-    if(e.d.q){
-      e.d.q.trim().toLowerCase().split(/\s+/).forEach(w=>{
+    if(e.query){
+      e.query.trim().toLowerCase().split(/\s+/).forEach(w=>{
         if(w.length>=3)kwCount[w]=(kwCount[w]||0)+1;
       });
     }
   });
-  const topKw=Object.entries(kwCount).sort((a,b)=>b[1]-a[1]).slice(0,20);
+  const topKw=Object.entries(kwCount).sort((a,b)=>b[1]-a[1]).slice(0,24);
   const maxKw=topKw[0]?topKw[0][1]:1;
   const kwEl=document.getElementById('dashKeywords');
   kwEl.innerHTML=topKw.length
-    ?topKw.map(([w,c])=>`<div class="kw-tag" style="opacity:${0.4+0.6*(c/maxKw)}">${esc(w)}<span class="kw-count">${c}</span></div>`).join('')
-    :'<span style="color:var(--text-dim);font-size:13px">Sin datos aún</span>';
+    ?topKw.map(([w,c])=>`<div class="kw-tag" style="font-size:${10+Math.round(4*(c/maxKw))}px">${esc(w)}<span class="kw-count">${c}</span></div>`).join('')
+    :'<span style="color:var(--text-dim);font-size:13px">Sin búsquedas registradas aún</span>';
 
-  // Rubros consultados (desde búsquedas con rubro)
+  // Rubros más consultados
   const rubroCount={};
-  searches.forEach(e=>{if(e.d.rubro)rubroCount[e.d.rubro]=(rubroCount[e.d.rubro]||0)+1;});
-  // También desde views
-  views.forEach(e=>{if(e.d.rubro)rubroCount[e.d.rubro]=(rubroCount[e.d.rubro]||0)+1;});
+  searches.forEach(e=>{if(e.rubro)rubroCount[e.rubro]=(rubroCount[e.rubro]||0)+1;});
+  views.forEach(e=>{if(e.rubro)rubroCount[e.rubro]=(rubroCount[e.rubro]||0)+1;});
   renderBarChart('dashRubros', Object.entries(rubroCount).sort((a,b)=>b[1]-a[1]).slice(0,8), 'secondary');
 
   // Productos más vistos
   const prodCount={};
-  views.forEach(e=>{const k=e.d.codigo;if(k)prodCount[k]=(prodCount[k]||0)+1;});
+  views.forEach(e=>{if(e.codigo)prodCount[e.codigo]=(prodCount[e.codigo]||0)+1;});
   const topProds=Object.entries(prodCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const topProdsLabeled=topProds.map(([cod,cnt])=>{
     const item=allData.find(x=>x.codigo===cod);
-    return [item?item.descripcion.substring(0,35):cod,cnt];
+    return [item?item.descripcion.substring(0,38):cod, cnt];
   });
   renderBarChart('dashTopViewed', topProdsLabeled, 'accent');
+
+  // Actualizar KPI de sesiones únicas
+  document.getElementById('kpiVisits').textContent = visits.length.toLocaleString('es');
+  // Agregar sesiones únicas debajo del KPI de visitas
+  const visitsCard = document.getElementById('kpiVisits').parentElement;
+  const existingSub = visitsCard.querySelector('.kpi-sub');
+  if(!existingSub){
+    const sub = document.createElement('div');
+    sub.className='kpi-sub';
+    sub.style.cssText='font-size:10px;color:var(--text-dim);margin-top:2px;';
+    sub.textContent=uniqueSessions+' sesiones únicas';
+    visitsCard.appendChild(sub);
+  } else {
+    existingSub.textContent=uniqueSessions+' sesiones únicas';
+  }
 }
 
 function renderBarChart(elId, data, colorClass='accent'){
@@ -1649,8 +1706,11 @@ function renderBarChart(elId, data, colorClass='accent'){
 async function loadDashboard(){
   const btn=document.getElementById('dashRefreshBtn');
   if(btn){btn.textContent='⟳ Cargando...';btn.disabled=true;}
-  renderDashAnalytics();
-  await loadRankingData();
+  // Ambas cargas en paralelo
+  await Promise.all([
+    renderDashAnalytics(),
+    loadRankingData()
+  ]);
   if(btn){btn.textContent='↺ Actualizar';btn.disabled=false;}
 }
 
@@ -1709,13 +1769,14 @@ async function loadRankingData(){
 }
 
 function renderOportunidades(salesMap){
-  const searches=getFilteredEvents('search');
-  const views=getFilteredEvents('view');
+  const events = analyticsCache || [];
+  const searches = events.filter(e=>e.type==='search');
+  const views    = events.filter(e=>e.type==='view');
 
   // Rubros muy buscados
   const rubroBusq={};
-  searches.forEach(e=>{if(e.d.rubro)rubroBusq[e.d.rubro]=(rubroBusq[e.d.rubro]||0)+1;});
-  views.forEach(e=>{if(e.d.rubro)rubroBusq[e.d.rubro]=(rubroBusq[e.d.rubro]||0)+1;});
+  searches.forEach(e=>{if(e.rubro)rubroBusq[e.rubro]=(rubroBusq[e.rubro]||0)+1;});
+  views.forEach(e=>{if(e.rubro)rubroBusq[e.rubro]=(rubroBusq[e.rubro]||0)+1;});
 
   // Rubros más vendidos
   const rubroVentas=rankingData?rankingData.salesRubroMap:{};
@@ -1724,7 +1785,7 @@ function renderOportunidades(salesMap){
 
   // Productos muy vistos y sin stock
   const viewCount={};
-  views.forEach(e=>{if(e.d.codigo)viewCount[e.d.codigo]=(viewCount[e.d.codigo]||0)+1;});
+  views.forEach(e=>{if(e.codigo)viewCount[e.codigo]=(viewCount[e.codigo]||0)+1;});
   Object.entries(viewCount).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([cod,cnt])=>{
     const item=allData.find(x=>x.codigo===cod);
     if(!item)return;
@@ -1738,7 +1799,7 @@ function renderOportunidades(salesMap){
   const topBusq=Object.entries(rubroBusq).sort((a,b)=>b[1]-a[1]).slice(0,5);
   topBusq.forEach(([rubro,busq])=>{
     const ventas=rubroVentas[rubro]||0;
-    if(busq>=3&&ventas===0){
+    if(busq>=2&&ventas===0){
       opps.push({type:'hot',icon:'🔥',desc:`Rubro "${rubro}" muy buscado`,meta:`${busq} consultas · 0 ventas registradas`});
     }
   });
