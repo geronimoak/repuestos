@@ -241,6 +241,35 @@ td.nprod span{background:var(--surface2);border:1px solid var(--border);border-r
 .add-user-form input:focus{border-color:var(--accent);}
 .add-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;min-height:40px;}
 .admin-msg{font-size:12px;margin-top:8px;display:none;}
+/* ── TABLA ADMIN — columnas analytics ── */
+td.vendido{text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--text-muted);}
+td.stock-total{text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;}
+td.cobertura{text-align:center;}
+.semaforo{display:inline-flex;align-items:center;gap:4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.sem-red{background:#fee2e2;color:#b91c1c;}
+.sem-yellow{background:#fef9c3;color:#854d0e;}
+.sem-green{background:#dcfce7;color:#15803d;}
+.sem-gray{background:var(--surface2);color:var(--text-dim);}
+.cov-bar{width:50px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:4px;}
+.cov-fill{height:100%;border-radius:3px;transition:width .4s;}
+
+/* Toolbar admin */
+.vend-toolbar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap;}
+.vend-toolbar::-webkit-scrollbar{display:none;}
+.tb-sort-label{font-size:11px;color:var(--text-dim);white-space:nowrap;flex-shrink:0;}
+.tb-sort-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+.tb-sort-btn:hover{border-color:var(--accent);color:var(--accent);}
+.tb-sort-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.tb-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;margin:0 2px;}
+.tb-filter-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+.tb-filter-btn.active{background:#fee2e2;border-color:#b91c1c;color:#b91c1c;}
+.tb-filter-btn.active.over{background:#fef9c3;border-color:#854d0e;color:#854d0e;}
+.ranking-loading{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);padding:4px 8px;background:var(--surface2);border-radius:20px;}
+.ranking-loading svg{animation:spin 1s linear infinite;}
+.sugerencia{font-size:10px;color:var(--text-dim);padding:2px 0;line-height:1.3;}
+.sugerencia.critica{color:#b91c1c;}
+.sugerencia.promo{color:#854d0e;}
+
 /* ── DASHBOARD OVERLAY ── */
 #dashOverlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:450;overflow-y:auto;}
 #dashOverlay.open{display:block;}
@@ -581,8 +610,32 @@ td.nprod span{background:var(--surface2);border:1px solid var(--border);border-r
           </div>
           <div class="vend-results" id="vendResults"></div>
         </div>
+        <div id="vendToolbar" class="vend-toolbar" style="display:none">
+          <span class="tb-sort-label">Ordenar:</span>
+          <button class="tb-sort-btn active" onclick="setVendSort('default')" id="vsDefault">Predeterminado</button>
+          <button class="tb-sort-btn" onclick="setVendSort('vendidos')" id="vsVendidos">🏆 Más vendidos</button>
+          <button class="tb-sort-btn" onclick="setVendSort('stock')" id="vsStock">📦 Menor stock</button>
+          <button class="tb-sort-btn" onclick="setVendSort('cobertura')" id="vsCobertura">⏱ Cobertura</button>
+          <div class="tb-sep"></div>
+          <button class="tb-filter-btn" onclick="toggleVendFilter('critico')" id="vfCritico">🔴 Críticos</button>
+          <button class="tb-filter-btn over" onclick="toggleVendFilter('sobrestock')" id="vfSobrestock">🟡 Sobrestock</button>
+          <span id="rankingLoadingBadge" class="ranking-loading" style="display:none">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            Cargando ventas...
+          </span>
+        </div>
         <div class="vend-table-wrap">
-          <table id="vendTable"><thead><tr><th style="width:46px"></th><th>Código</th><th>Descripción</th><th>Marca</th><th>Rubro</th><th style="text-align:center">Prods.</th></tr></thead><tbody id="vendBody"></tbody></table>
+          <table id="vendTable"><thead><tr>
+            <th style="width:46px"></th>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>Marca</th>
+            <th>Rubro</th>
+            <th style="text-align:center">Prods.</th>
+            <th style="text-align:center" title="Unidades vendidas (histórico)">Vendidas</th>
+            <th style="text-align:center" title="Stock total disponible">Stock</th>
+            <th style="text-align:center" title="Meses de cobertura">Cobertura</th>
+          </tr></thead><tbody id="vendBody"></tbody></table>
           <div class="empty-state" id="vendEmpty" style="display:none"><p>Sin resultados</p></div>
           <div class="pagination" id="vendPag"></div>
         </div>
@@ -867,6 +920,7 @@ function doLogin(){
   const b=document.getElementById('roleBadge');b.className='role-badge '+role;b.textContent=role==='admin'?'Administrador':'Vendedor';
   document.getElementById('headerCount').textContent=`${allData.length.toLocaleString('es')} artículos`;
   buildRubros();vendFiltered=allData;vendPage=0;renderVendTable();renderVendPag();
+  loadRankingForTable();
   document.getElementById('vendResults').textContent=`${allData.length.toLocaleString('es')} resultados`;
 }
 function cerrarSesion(){
@@ -1065,10 +1119,41 @@ function applyVendFilter(){
   const words=document.getElementById('vendSearch').value.trim().split(/\s+/).filter(Boolean).slice(0,3).map(norm);
   vendFiltered=allData.filter(item=>{
     if(vendRubroSel&&item.rubro!==vendRubroSel)return false;
+    if(!words.length&&!vendFilters.size){return true;}
+    // Filtros de semáforo
+    if(vendFilters.size){
+      const cob=getCobertura(item);
+      const v=getVendidas(item);
+      if(vendFilters.has('critico')&&!vendFilters.has('sobrestock')){
+        if(!(v>0&&cob<1))return false;
+      }
+      if(vendFilters.has('sobrestock')&&!vendFilters.has('critico')){
+        if(!(cob>12&&v>0))return false;
+      }
+      if(vendFilters.has('critico')&&vendFilters.has('sobrestock')){
+        const critico=v>0&&cob<1;
+        const sobre=cob>12&&v>0;
+        if(!critico&&!sobre)return false;
+      }
+    }
     if(!words.length)return true;
-    const h=norm([item.descripcion,item.marca,item.modelo,item.codigo,item.rubro,item.buscables,item.productos.map(p=>p.codigoRev||'').join(' ')].join(' '));
-    return words.every(w=>h.includes(w));
+    const hh=norm([item.descripcion,item.marca,item.modelo,item.codigo,item.rubro,item.buscables,item.productos.map(p=>p.codigoRev||'').join(' ')].join(' '));
+    return words.every(w=>hh.includes(w));
   });
+  // Ordenamiento
+  if(vendSort==='vendidos'){
+    vendFiltered=[...vendFiltered].sort((a,b)=>getVendidas(b)-getVendidas(a));
+  } else if(vendSort==='stock'){
+    vendFiltered=[...vendFiltered].sort((a,b)=>getStockTotal(a)-getStockTotal(b));
+  } else if(vendSort==='cobertura'){
+    vendFiltered=[...vendFiltered].sort((a,b)=>{
+      const ca=getCobertura(a),cb=getCobertura(b);
+      if(ca===999&&cb===999)return 0;
+      if(ca===999)return 1;
+      if(cb===999)return -1;
+      return ca-cb;
+    });
+  }
   document.getElementById('vendResults').textContent=`${vendFiltered.length.toLocaleString('es')} resultados`;
   document.getElementById('vendEmpty').style.display=vendFiltered.length===0?'block':'none';
   document.getElementById('vendTable').style.display=vendFiltered.length===0?'none':'';
@@ -1823,6 +1908,105 @@ function renderOportunidades(salesMap){
     :'<div style="color:var(--text-dim);font-size:13px;padding:12px 0">Sin oportunidades detectadas aún.<br>Necesitás más datos de navegación.</div>';
 }
 
+
+
+// ══════════════════════════════════════════════
+// RANKING DATA para tabla admin
+// ══════════════════════════════════════════════
+let salesByCode = {};    // codigo_indice → unidades vendidas
+let vendSort = 'default';
+let vendFilters = new Set(); // 'critico' | 'sobrestock'
+let rankingLoaded = false;
+
+async function loadRankingForTable(){
+  if(rankingLoaded)return;
+  document.getElementById('rankingLoadingBadge').style.display='inline-flex';
+  try{
+    const revRows   = await fetchSheet('REV');
+    const rankRows  = await fetchSheet('RANKING');
+    // Mapa Código REV → Codigo_Equivalente
+    const revToEquiv={};
+    for(const r of revRows){
+      const v=Object.values(r);
+      const cod=(v[0]||'').toString().trim();
+      const equiv=(v[4]||'').toString().trim();
+      if(cod&&equiv)revToEquiv[cod]=equiv;
+    }
+    // Acumular ventas por codigo_equivalente
+    salesByCode={};
+    for(const r of rankRows){
+      const v=Object.values(r);
+      const codArt=(v[0]||'').toString().trim();
+      const qty=parseInt(v[1])||0;
+      const equiv=revToEquiv[codArt];
+      if(!equiv)continue;
+      salesByCode[equiv]=(salesByCode[equiv]||0)+qty;
+    }
+    rankingLoaded=true;
+    renderVendTable();
+    document.getElementById('vendToolbar').style.display='flex';
+  }catch(e){
+    console.warn('Ranking load error:',e);
+  }
+  document.getElementById('rankingLoadingBadge').style.display='none';
+}
+
+function getStockTotal(item){
+  return item.productos.reduce((s,p)=>s+(p.stock>0?p.stock:0),0);
+}
+function getVendidas(item){
+  return salesByCode[item.codigo]||0;
+}
+function getCobertura(item){
+  const v=getVendidas(item);
+  const s=getStockTotal(item);
+  if(!v)return s>0?999:0; // sin ventas: infinito si hay stock, 0 si no
+  const mensual=v/24;
+  if(!mensual)return 999;
+  return s/mensual;
+}
+function getSemaforo(item){
+  const cob=getCobertura(item);
+  const stock=getStockTotal(item);
+  const v=getVendidas(item);
+  if(!v&&!stock)return{cls:'sem-gray',label:'Sin datos',dot:'⚪'};
+  if(cob===999&&stock>0)return{cls:'sem-green',label:'Sin rotación',dot:'🟢'};
+  if(cob<1)return{cls:'sem-red',label:'Crítico',dot:'🔴'};
+  if(cob<3)return{cls:'sem-yellow',label:'Medio',dot:'🟡'};
+  return{cls:'sem-green',label:'OK',dot:'🟢'};
+}
+function getSugerencia(item){
+  const v=getVendidas(item);
+  const s=getStockTotal(item);
+  const cob=getCobertura(item);
+  if(!v)return'';
+  const mensual=v/24;
+  if(cob<1&&s<mensual*2){
+    const reponer=Math.ceil(mensual*3-s);
+    return{type:'critica',text:`Reponer ~${reponer} uds`};
+  }
+  if(cob>12&&mensual>0){
+    return{type:'promo',text:`Sobrestock · promover`};
+  }
+  return'';
+}
+
+// Ordenamiento y filtros de la tabla
+function setVendSort(s){
+  vendSort=s;
+  ['default','vendidos','stock','cobertura'].forEach(k=>{
+    const btn=document.getElementById('vs'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(btn)btn.classList.toggle('active',k===s);
+  });
+  vendPage=0;applyVendFilter();
+}
+function toggleVendFilter(f){
+  if(vendFilters.has(f))vendFilters.delete(f);
+  else vendFilters.add(f);
+  const btn=document.getElementById(f==='critico'?'vfCritico':'vfSobrestock');
+  if(btn)btn.classList.toggle('active',vendFilters.has(f));
+  vendPage=0;applyVendFilter();
+}
 
 cargarDatos();
 </script>
