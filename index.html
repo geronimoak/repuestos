@@ -96,6 +96,15 @@
   }
   #searchInput:focus { border-color: var(--accent); background: var(--surface); }
   #searchInput::placeholder { color: var(--text-dim); }
+  #clearSearch {
+    display: none;
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--text-dim); cursor: pointer;
+    font-size: 14px; padding: 2px 4px; border-radius: 50%;
+    line-height: 1; transition: all 0.15s;
+  }
+  #clearSearch:hover { background: var(--border); color: var(--text); }
+  #searchInput:not(:placeholder-shown) ~ #clearSearch { display: block; }
   .results-info { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
 
   /* TABLE */
@@ -204,7 +213,8 @@
   <div class="search-bar">
     <div class="search-wrap">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="searchInput" placeholder="Buscar por descripción, marca, modelo... (hasta 3 palabras)">
+      <input type="text" id="searchInput" placeholder="Buscar por descripción, marca, modelo, código... (hasta 3 palabras)">
+      <button id="clearSearch" onclick="clearSearchFn()" title="Limpiar búsqueda">✕</button>
     </div>
     <div class="results-info" id="resultsInfo"></div>
   </div>
@@ -388,7 +398,9 @@ async function recargarDatos() {
       const key = (r['Codigo_Equivalente'] || r['Código'] || '').trim();
       if (!key) continue;
       if (!revMap[key]) revMap[key] = [];
-      revMap[key].push({ marca2: (r['Marca2'] || '').trim(), stock: parseInt(r['Cantidad Disponible']) || 0 });
+      const marca2Key = Object.keys(r).find(k => k.toLowerCase().replace(/\s/g,'') === 'marca2') || 'Marca2';
+      const codKey = Object.keys(r).find(k => k.toLowerCase().replace(/\s/g,'') === 'código') || 'Código';
+      revMap[key].push({ marca2: (r[marca2Key] || '').trim(), codigoRev: (r[codKey] || '').trim(), stock: parseInt(r['Cantidad Disponible']) || 0 });
     }
     allData = indice.map(row => ({
       codigo: (row['Codigo'] || '').trim(),
@@ -459,7 +471,9 @@ function applyFilters() {
   filtered = allData.filter(item => {
     if (selectedRubro && item.rubro !== selectedRubro) return false;
     if (!words.length) return true;
-    const h = norm([item.descripcion, item.marca, item.modelo, item.codigo, item.rubro, item.buscables].join(' '));
+    // Buscar en campos del ítem + códigos REV asociados
+    const codisRev = item.productos.map(p => p.codigoRev || '').join(' ');
+    const h = norm([item.descripcion, item.marca, item.modelo, item.codigo, item.rubro, item.buscables, codisRev].join(' '));
     return words.every(w => h.includes(w));
   });
   document.getElementById('resultsInfo').textContent = `${filtered.length.toLocaleString('es')} resultado${filtered.length !== 1 ? 's' : ''}`;
@@ -583,6 +597,14 @@ function closeModal() {
 function esc(s) {
   if (!s || s === 'nan') return '';
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── CLEAR SEARCH ─────────────────────────────────────────────
+function clearSearchFn() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchInput').focus();
+  currentPage = 0;
+  applyFilters();
 }
 
 // ── INIT ──────────────────────────────────────────────────────
