@@ -503,11 +503,14 @@ img{display:block;}
           <div class="story-share-row">
             <button class="story-share-btn dl" onclick="downloadStory()">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Guardar imagen
+              Guardar
             </button>
-            <button class="story-share-btn" onclick="shareNative()" id="shareNativeBtn">
+            <button class="story-share-btn" onclick="shareNative()">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               Compartir
+            </button>
+            <button class="story-share-btn" onclick="addStoryItemToBudget()" style="background:rgba(232,160,32,.2);border-color:rgba(232,160,32,.4);">
+              📋 Presupuesto
             </button>
             <button class="story-share-btn" onclick="closeStory()" style="flex:0 0 44px;padding:11px 0;">✕</button>
           </div>
@@ -1002,6 +1005,22 @@ async function shareNative(){
     _shareWAFallback();
   }
 }
+function addStoryItemToBudget(){
+  if(!currentItem)return;
+  budgetItems.push({
+    id:Date.now(),
+    type:'product',
+    desc:currentItem.descripcion,
+    rubro:currentItem.rubro,
+    imagen:currentItem.imagen,
+    precio:0,
+    item:currentItem
+  });
+  renderBudget();updateFAB();
+  closeStory();
+  toast('✓ Agregado al presupuesto');
+}
+
 function _shareWAFallback(){
   const msg = encodeURIComponent('Hola! Consulto por: '+(currentItem?.descripcion||'')+' ('+( currentItem?.codigo||'')+')');
   window.open('https://wa.me/'+WA_NUMBER+'?text='+msg,'_blank');
