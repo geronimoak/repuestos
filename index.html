@@ -388,7 +388,7 @@ async function recargarDatos() {
       const key = (r['Codigo_Equivalente'] || r['Código'] || '').trim();
       if (!key) continue;
       if (!revMap[key]) revMap[key] = [];
-      revMap[key].push({ codigo: (r['Código'] || '').trim(), stock: parseInt(r['Cantidad Disponible']) || 0 });
+      revMap[key].push({ marca2: (r['Marca2'] || '').trim(), stock: parseInt(r['Cantidad Disponible']) || 0 });
     }
     allData = indice.map(row => ({
       codigo: (row['Codigo'] || '').trim(),
@@ -559,11 +559,11 @@ function openModal(item, tr) {
     const conStock = prods.filter(p => p.stock > 0).length;
     let t = '';
     if (conStock) t += `<div style="margin-bottom:10px;font-size:12px;color:var(--stock-ok)">● ${conStock} con stock disponible</div>`;
-    t += `<table class="prod-table"><thead><tr><th>#</th><th>Código proveedor</th><th>Stock</th></tr></thead><tbody>`;
+    t += `<table class="prod-table"><thead><tr><th>#</th><th>Fabricante</th><th>Stock</th></tr></thead><tbody>`;
     prods.forEach((p, i) => {
       const ok = p.stock > 0;
       t += `<tr><td style="color:var(--text-dim);font-size:11px">${i+1}</td>
-        <td style="font-family:'Barlow Condensed',sans-serif;font-size:14px">${esc(p.codigo)}</td>
+        <td style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600">${esc(p.marca2) || '—'}</td>
         <td><span class="stock-badge ${ok?'ok':'no'}"><span class="stock-dot"></span>${ok?p.stock+' disp.':'Sin stock'}</span></td></tr>`;
     });
     t += '</tbody></table>';
