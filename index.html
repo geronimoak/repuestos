@@ -1162,6 +1162,16 @@ function applyVendFilter(){
 function renderVendTable(){
   const tbody=document.getElementById('vendBody');
   const slice=vendFiltered.slice(vendPage*PAGE_SIZE,(vendPage+1)*PAGE_SIZE);
+  // Debug: verificar primer match
+  if(rankingLoaded&&slice.length>0){
+    const sample=slice.find(x=>salesByCode[x.codigo]);
+    if(!sample&&slice.length>0){
+      // Verificar formato de keys
+      const firstKey=Object.keys(salesByCode)[0]||'';
+      const firstCod=slice[0].codigo||'';
+      console.log('salesByCode sample key:',firstKey,'| allData codigo sample:',firstCod);
+    }
+  }
   tbody.innerHTML='';
   slice.forEach(item=>{
     const tr=document.createElement('tr');tr.className='item-row';
@@ -1620,16 +1630,17 @@ let sending = false;
 async function flushQueue(){
   if(sending||!eventQueue.length)return;
   sending=true;
-  const batch=eventQueue.splice(0,5); // enviar de a 5
+  const batch=eventQueue.splice(0,5);
   for(const evt of batch){
     try{
+      // no-cors: evita bloqueo CORS, no devuelve respuesta pero el POST llega
       await fetch(ANALYTICS_URL,{
         method:'POST',
+        mode:'no-cors',
         body:JSON.stringify(evt),
-        headers:{'Content-Type':'application/json'}
+        headers:{'Content-Type':'text/plain'} // text/plain evita preflight
       });
     }catch(e){
-      // Si falla, reinsertar al frente
       eventQueue.unshift(evt);
       break;
     }
@@ -1702,11 +1713,10 @@ async function renderDashAnalytics(){
   });
 
   try{
-    const res = await fetch(`${ANALYTICS_URL}?action=read&period=${dashPeriod}`);
-    const data = await res.json();
-    analyticsCache = data.events || [];
+    analyticsCache = await fetchJSONP(`${ANALYTICS_URL}?action=read&period=${dashPeriod}`);
+    analyticsCache = analyticsCache.events || [];
   }catch(e){
-    console.warn('Analytics fetch error:', e);
+    console.warn('Analytics fetch error:', e.message);
     analyticsCache = [];
   }
 
@@ -2031,6 +2041,29 @@ function toggleVendFilter(f){
   const btn=document.getElementById(f==='critico'?'vfCritico':'vfSobrestock');
   if(btn)btn.classList.toggle('active',vendFilters.has(f));
   vendPage=0;applyVendFilter();
+}
+
+
+// ══════════════════════════════════════════════
+// JSONP helper — para Apps Script sin CORS
+// ══════════════════════════════════════════════
+function fetchJSONP(url){
+  return new Promise((resolve,reject)=>{
+    const cbName='_jsonp_'+Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    const timeout=setTimeout(()=>{
+      cleanup();reject(new Error('JSONP timeout'));
+    },10000);
+    function cleanup(){
+      clearTimeout(timeout);
+      delete window[cbName];
+      if(script.parentNode)script.parentNode.removeChild(script);
+    }
+    window[cbName]=function(data){cleanup();resolve(data);};
+    script.src=url+(url.includes('?')?'&':'?')+'callback='+cbName;
+    script.onerror=()=>{cleanup();reject(new Error('JSONP error'));};
+    document.head.appendChild(script);
+  });
 }
 
 cargarDatos();
