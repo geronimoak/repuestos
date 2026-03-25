@@ -241,6 +241,69 @@ td.nprod span{background:var(--surface2);border:1px solid var(--border);border-r
 .add-user-form input:focus{border-color:var(--accent);}
 .add-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;min-height:40px;}
 .admin-msg{font-size:12px;margin-top:8px;display:none;}
+/* ── DASHBOARD OVERLAY ── */
+#dashOverlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:450;overflow-y:auto;}
+#dashOverlay.open{display:block;}
+.dash-header{background:var(--surface);border-bottom:2px solid var(--accent);padding:0 20px;display:flex;align-items:center;gap:12px;height:56px;position:sticky;top:0;z-index:10;}
+.dash-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--accent);}
+.dash-close{margin-left:auto;background:none;border:1px solid var(--border);border-radius:var(--radius);color:var(--text-muted);padding:6px 14px;cursor:pointer;font-size:13px;transition:all .15s;}
+.dash-close:hover{border-color:var(--accent);color:var(--accent);}
+.dash-body{padding:20px;max-width:1000px;margin:0 auto;}
+
+/* Período selector */
+.dash-period{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.period-btn{padding:6px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+.period-btn:hover{border-color:var(--accent);color:var(--accent);}
+.period-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* KPI cards */
+.dash-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+@media(min-width:600px){.dash-kpis{grid-template-columns:repeat(4,1fr);}}
+.kpi-card{background:var(--surface);border-radius:12px;border:1px solid var(--border);padding:16px;text-align:center;}
+.kpi-icon{font-size:24px;margin-bottom:6px;}
+.kpi-value{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--accent);}
+.kpi-label{font-size:11px;color:var(--text-muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px;}
+
+/* Secciones */
+.dash-section{background:var(--surface);border-radius:12px;border:1px solid var(--border);padding:18px;margin-bottom:16px;}
+.dash-section-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.dash-section-title span{font-size:16px;}
+
+/* Bar chart */
+.bar-chart{display:flex;flex-direction:column;gap:8px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-label{font-size:12px;color:var(--text);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;}
+@media(max-width:480px){.bar-label{width:90px;font-size:11px;}}
+.bar-track{flex:1;background:var(--surface2);border-radius:20px;height:22px;overflow:hidden;position:relative;}
+.bar-fill{height:100%;border-radius:20px;background:var(--accent);transition:width .6s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-width:28px;}
+.bar-fill.secondary{background:#6b9cc8;}
+.bar-fill.accent3{background:#e8a020;}
+.bar-val{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;}
+
+/* Keywords tags */
+.keywords-cloud{display:flex;flex-wrap:wrap;gap:6px;}
+.kw-tag{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);font-size:12px;color:var(--text);}
+.kw-count{font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--accent);font-size:12px;}
+
+/* Oportunidades */
+.opp-list{display:flex;flex-direction:column;gap:8px;}
+.opp-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--surface2);border-left:3px solid var(--border);}
+.opp-item.hot{border-left-color:#e8a020;background:#fffbf0;}
+.opp-item.alert{border-left-color:var(--stock-no);background:#fff5f5;}
+.opp-item.ok{border-left-color:var(--stock-ok);background:#f0fdf4;}
+.opp-icon{font-size:18px;flex-shrink:0;}
+.opp-info{flex:1;min-width:0;}
+.opp-desc{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.opp-meta{font-size:11px;color:var(--text-muted);margin-top:1px;}
+
+/* 2 columnas en secciones */
+.dash-grid2{display:grid;grid-template-columns:1fr;gap:16px;}
+@media(min-width:700px){.dash-grid2{grid-template-columns:1fr 1fr;}}
+
+/* Loading dash */
+.dash-loading{padding:60px;text-align:center;color:var(--text-dim);}
+.dash-loading-icon{font-size:32px;margin-bottom:12px;animation:spin 1.5s linear infinite;}
+
 /* ── BOTÓN FLOTANTE PRESUPUESTO ── */
 #budgetFab{
   position:fixed;bottom:24px;right:20px;z-index:250;
@@ -499,7 +562,7 @@ td.nprod span{background:var(--surface2);border:1px solid var(--border);border-r
       <div class="hdr-right">
         <span id="headerCount" style="font-size:12px;color:var(--text-muted);"></span>
         <button class="icon-btn" id="refreshBtn" onclick="recargarDatos()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Actualizar</button>
-        <button class="icon-btn" id="adminBtn" onclick="openAdmin()" style="display:none">⚙ Admin</button>
+        <button class="icon-btn" id="dashBtn" onclick="openDash()" style="display:none">📊 Analytics</button><button class="icon-btn" id="adminBtn" onclick="openAdmin()" style="display:none">⚙ Admin</button>
         <button class="icon-btn" onclick="cerrarSesion()">Salir</button>
       </div>
     </header>
@@ -663,6 +726,67 @@ td.nprod span{background:var(--surface2);border:1px solid var(--border);border-r
     <div class="modal-body"><h3 id="mProdTitle"></h3><div id="mProds"></div></div>
   </div>
 </div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="dashOverlay">
+  <div class="dash-header">
+    <div class="dash-title">📊 Analytics & Ventas</div>
+    <div style="display:flex;gap:8px;margin-left:auto">
+      <button class="icon-btn" onclick="loadDashboard()" id="dashRefreshBtn">↺ Actualizar</button>
+      <button class="dash-close" onclick="closeDash()">✕ Cerrar</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <!-- Período -->
+    <div class="dash-period">
+      <button class="period-btn active" onclick="setPeriod('today')" id="pToday">Hoy</button>
+      <button class="period-btn" onclick="setPeriod('7d')" id="p7d">7 días</button>
+      <button class="period-btn" onclick="setPeriod('30d')" id="p30d">30 días</button>
+      <button class="period-btn" onclick="setPeriod('all')" id="pAll">Todo</button>
+    </div>
+    <!-- KPIs -->
+    <div class="dash-kpis">
+      <div class="kpi-card"><div class="kpi-icon">👁</div><div class="kpi-value" id="kpiVisits">—</div><div class="kpi-label">Visitas</div></div>
+      <div class="kpi-card"><div class="kpi-icon">🔍</div><div class="kpi-value" id="kpiSearches">—</div><div class="kpi-label">Búsquedas</div></div>
+      <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-value" id="kpiViewed">—</div><div class="kpi-label">Productos vistos</div></div>
+      <div class="kpi-card"><div class="kpi-icon">📋</div><div class="kpi-value" id="kpiBudgets">—</div><div class="kpi-label">Presupuestos</div></div>
+    </div>
+    <!-- Grid 2 col -->
+    <div class="dash-grid2">
+      <!-- Búsquedas más frecuentes -->
+      <div class="dash-section">
+        <div class="dash-section-title"><span>🔍</span> Keywords más buscadas</div>
+        <div id="dashKeywords" class="keywords-cloud"></div>
+      </div>
+      <!-- Rubros más consultados -->
+      <div class="dash-section">
+        <div class="dash-section-title"><span>📂</span> Rubros más consultados</div>
+        <div id="dashRubros" class="bar-chart"></div>
+      </div>
+    </div>
+    <!-- Productos más vistos -->
+    <div class="dash-section">
+      <div class="dash-section-title"><span>👁</span> Productos más vistos (sesión)</div>
+      <div id="dashTopViewed" class="bar-chart"></div>
+    </div>
+    <!-- Ventas RANKING -->
+    <div class="dash-section">
+      <div class="dash-section-title"><span>🏆</span> Top productos por unidades vendidas <small style="font-weight:400;font-size:11px;color:var(--text-dim);margin-left:6px;">vía RANKING × REV × INDICE</small></div>
+      <div id="dashTopSales" class="dash-loading"><div class="dash-loading-icon">⟳</div><p>Cargando datos de ventas...</p></div>
+    </div>
+    <!-- Grid oportunidades -->
+    <div class="dash-grid2">
+      <div class="dash-section">
+        <div class="dash-section-title"><span>🏆</span> Rubros más vendidos (unidades)</div>
+        <div id="dashSalesRubros" class="bar-chart"></div>
+      </div>
+      <div class="dash-section">
+        <div class="dash-section-title"><span>💡</span> Oportunidades detectadas</div>
+        <div id="dashOpps" class="opp-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="adminPanel">
   <div class="admin-box">
     <div class="admin-head"><h2>⚙ Administración</h2><button class="close-btn" onclick="closeAdmin()">✕</button></div>
@@ -705,7 +829,7 @@ async function cargarDatos(){
     allData=indice.map(row=>({codigo:(row['Codigo']||'').trim(),descripcion:(row['Descripcion']||'').trim(),marca:(row['Marca']||'').trim(),modelo:(row['Modelo']||'').trim(),rubro:(row['RUBRO']||'').trim(),linea:(row['LINEA']||'').trim(),imagen:(row['IMAGEN']||'').trim(),buscables:(row['BUSCABLES']||'').trim(),productos:revMap[(row['Codigo']||'').trim()]||[]})).filter(r=>r.codigo);
     allRubros=[...new Set(allData.map(r=>r.rubro).filter(r=>r&&r!=='nan'))].sort();
     ldStep(100,'¡Listo!');
-    setTimeout(()=>{const ld=document.getElementById('loader');ld.classList.add('fade');setTimeout(()=>ld.style.display='none',400);document.getElementById('app').style.display='block';buildPicker();checkURLParams();updateFAB();},300);
+    setTimeout(()=>{const ld=document.getElementById('loader');ld.classList.add('fade');setTimeout(()=>ld.style.display='none',400);document.getElementById('app').style.display='block';buildPicker();checkURLParams();updateFAB();trackVisit();},300);
   }catch(e){document.getElementById('loaderError').textContent='Error: '+e.message;document.getElementById('loaderError').style.display='block';}
 }
 async function recargarDatos(){
@@ -735,7 +859,7 @@ function doLogin(){
   document.getElementById('tbLoginBtn').style.display='none';
   const vi=document.getElementById('tbVendInfo');vi.style.display='flex';
   const b2=document.getElementById('roleBadge2');b2.className='role-badge '+role;b2.textContent=role==='admin'?'Admin':'Vendedor';
-  if(role==='admin'){document.getElementById('adminBtn2').style.display='';document.getElementById('adminBtn').style.display='';}
+  if(role==='admin'){document.getElementById('adminBtn2').style.display='';document.getElementById('adminBtn').style.display='';document.getElementById('dashBtn').style.display='';}
   document.getElementById('vistaPublica').style.display='none';
   document.getElementById('vistaVendedor').style.display='block';
   document.getElementById('topBar').style.display='none';
@@ -817,6 +941,7 @@ function ejecutarBusqueda(){
   if(!q&&!selectedRubro)return;
   if(q)addHistory(q);
   closeAC();
+  trackSearch(q,selectedRubro);
   document.getElementById('pubSearchInput').value=q;
   document.getElementById('pubClear').style.display=q?'block':'none';
   document.getElementById('hero').style.display='none';
@@ -1126,6 +1251,7 @@ let detailItem=null;
 
 function openDetail(item){
   detailItem=item;
+  trackProductView(item.codigo,item.descripcion,item.rubro);
   const imgUrl=item.imagen&&item.imagen!=='nan'?IMAGEN_MAP[item.imagen]:null;
   const dImg=document.getElementById('dImg');
   dImg.innerHTML=imgUrl?`<img src="${imgUrl}" alt="" onerror="this.parentElement.innerHTML='<div class=\'detail-img-ph\'>📦</div>'">`:'<div class="detail-img-ph">📦</div>';
@@ -1365,6 +1491,7 @@ function formatBudgetText(){
 
 function sendBudgetWA(){
   if(!budgetItems.length){alert('Agregá al menos un ítem al presupuesto');return;}
+  trackBudget();
   const txt=formatBudgetText();
   window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
 }
@@ -1391,6 +1518,250 @@ function addItemFromDetail(){
   toast.classList.add('show');
   setTimeout(()=>{toast.classList.remove('show');toast.textContent='🔗 Link copiado';},1800);
 }
+
+
+// ══════════════════════════════════════════════
+// ANALYTICS TRACKER (localStorage)
+// ══════════════════════════════════════════════
+const ANALYTICS_KEY = 'rp_analytics';
+
+function getAnalytics(){
+  try{return JSON.parse(localStorage.getItem(ANALYTICS_KEY)||'{"events":[]}');}
+  catch{return {events:[]};}
+}
+function saveAnalytics(data){
+  // Mantener max 2000 eventos
+  if(data.events.length>2000)data.events=data.events.slice(-2000);
+  localStorage.setItem(ANALYTICS_KEY,JSON.stringify(data));
+}
+function trackEvent(type,data){
+  const analytics=getAnalytics();
+  analytics.events.push({t:type,d:data,ts:Date.now()});
+  saveAnalytics(analytics);
+}
+
+// Track visita al cargar
+function trackVisit(){trackEvent('visit',{});}
+
+// Track búsqueda
+function trackSearch(q,rubro){
+  if(q||rubro)trackEvent('search',{q:q||'',rubro:rubro||''});
+}
+
+// Track producto visto
+function trackProductView(codigo,descripcion,rubro){
+  trackEvent('view',{codigo,desc:descripcion.substring(0,40),rubro});
+}
+
+// Track presupuesto
+function trackBudget(){trackEvent('budget',{items:budgetItems.length});}
+
+// ══════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════
+let dashPeriod = 'today';
+let rankingData = null; // cache
+
+function openDash(){
+  document.getElementById('dashOverlay').classList.add('open');
+  loadDashboard();
+}
+function closeDash(){document.getElementById('dashOverlay').classList.remove('open');}
+
+function setPeriod(p){
+  dashPeriod=p;
+  ['today','7d','30d','all'].forEach(k=>{
+    const btn=document.getElementById('p'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(btn)btn.classList.toggle('active',k===p);
+  });
+  renderDashAnalytics();
+}
+
+function getFilteredEvents(type){
+  const all=getAnalytics().events;
+  const now=Date.now();
+  const cutoffs={today:86400000,'7d':604800000,'30d':2592000000,all:Infinity};
+  const cutoff=cutoffs[dashPeriod]||Infinity;
+  return all.filter(e=>e.t===type&&(now-e.ts)<=cutoff);
+}
+
+function renderDashAnalytics(){
+  // KPIs
+  const visits=getFilteredEvents('visit');
+  const searches=getFilteredEvents('search');
+  const views=getFilteredEvents('view');
+  const budgets=getFilteredEvents('budget');
+
+  document.getElementById('kpiVisits').textContent=visits.length.toLocaleString('es');
+  document.getElementById('kpiSearches').textContent=searches.length.toLocaleString('es');
+  document.getElementById('kpiViewed').textContent=views.length.toLocaleString('es');
+  document.getElementById('kpiBudgets').textContent=budgets.length.toLocaleString('es');
+
+  // Keywords
+  const kwCount={};
+  searches.forEach(e=>{
+    if(e.d.q){
+      e.d.q.trim().toLowerCase().split(/\s+/).forEach(w=>{
+        if(w.length>=3)kwCount[w]=(kwCount[w]||0)+1;
+      });
+    }
+  });
+  const topKw=Object.entries(kwCount).sort((a,b)=>b[1]-a[1]).slice(0,20);
+  const maxKw=topKw[0]?topKw[0][1]:1;
+  const kwEl=document.getElementById('dashKeywords');
+  kwEl.innerHTML=topKw.length
+    ?topKw.map(([w,c])=>`<div class="kw-tag" style="opacity:${0.4+0.6*(c/maxKw)}">${esc(w)}<span class="kw-count">${c}</span></div>`).join('')
+    :'<span style="color:var(--text-dim);font-size:13px">Sin datos aún</span>';
+
+  // Rubros consultados (desde búsquedas con rubro)
+  const rubroCount={};
+  searches.forEach(e=>{if(e.d.rubro)rubroCount[e.d.rubro]=(rubroCount[e.d.rubro]||0)+1;});
+  // También desde views
+  views.forEach(e=>{if(e.d.rubro)rubroCount[e.d.rubro]=(rubroCount[e.d.rubro]||0)+1;});
+  renderBarChart('dashRubros', Object.entries(rubroCount).sort((a,b)=>b[1]-a[1]).slice(0,8), 'secondary');
+
+  // Productos más vistos
+  const prodCount={};
+  views.forEach(e=>{const k=e.d.codigo;if(k)prodCount[k]=(prodCount[k]||0)+1;});
+  const topProds=Object.entries(prodCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const topProdsLabeled=topProds.map(([cod,cnt])=>{
+    const item=allData.find(x=>x.codigo===cod);
+    return [item?item.descripcion.substring(0,35):cod,cnt];
+  });
+  renderBarChart('dashTopViewed', topProdsLabeled, 'accent');
+}
+
+function renderBarChart(elId, data, colorClass='accent'){
+  const el=document.getElementById(elId);
+  if(!data.length){el.innerHTML='<span style="color:var(--text-dim);font-size:13px">Sin datos aún</span>';return;}
+  const max=data[0][1]||1;
+  el.innerHTML=data.map(([label,val])=>`
+    <div class="bar-row">
+      <div class="bar-label" title="${esc(label)}">${esc(label)}</div>
+      <div class="bar-track">
+        <div class="bar-fill ${colorClass}" style="width:${Math.max(5,(val/max)*100)}%">
+          <span class="bar-val">${val.toLocaleString('es')}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function loadDashboard(){
+  const btn=document.getElementById('dashRefreshBtn');
+  if(btn){btn.textContent='⟳ Cargando...';btn.disabled=true;}
+  renderDashAnalytics();
+  await loadRankingData();
+  if(btn){btn.textContent='↺ Actualizar';btn.disabled=false;}
+}
+
+async function loadRankingData(){
+  try{
+    // Cargar hoja RANKING
+    const rankingRows=await fetchSheet('RANKING');
+    const revRows=await fetchSheet('REV');
+
+    // Construir mapa Código REV → Codigo_Equivalente
+    const revToEquiv={};
+    for(const r of revRows){
+      const v=Object.values(r);
+      const cod=(v[0]||'').toString().trim();
+      const equiv=(v[4]||'').toString().trim();
+      if(cod&&equiv)revToEquiv[cod]=equiv;
+    }
+
+    // Agrupar RANKING por codigo_equivalente
+    const salesMap={};
+    const salesRubroMap={};
+    for(const r of rankingRows){
+      const vals=Object.values(r);
+      const codArt=(vals[0]||'').toString().trim();
+      const qty=parseInt(vals[1])||0;
+      const equiv=revToEquiv[codArt];
+      if(!equiv)continue;
+      salesMap[equiv]=(salesMap[equiv]||0)+qty;
+      // Rubro desde allData
+      const item=allData.find(x=>x.codigo===equiv);
+      if(item&&item.rubro){
+        salesRubroMap[item.rubro]=(salesRubroMap[item.rubro]||0)+qty;
+      }
+    }
+
+    rankingData={salesMap,salesRubroMap};
+
+    // Top 10 productos vendidos
+    const topSales=Object.entries(salesMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    const topSalesLabeled=topSales.map(([cod,qty])=>{
+      const item=allData.find(x=>x.codigo===cod);
+      return [item?item.descripcion.substring(0,38):cod, qty];
+    });
+    renderBarChart('dashTopSales', topSalesLabeled, 'accent3');
+
+    // Rubros más vendidos
+    const topSalesRubros=Object.entries(salesRubroMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    renderBarChart('dashSalesRubros', topSalesRubros, 'accent3');
+
+    // Oportunidades
+    renderOportunidades(salesMap);
+
+  }catch(e){
+    document.getElementById('dashTopSales').innerHTML=`<span style="color:var(--stock-no);font-size:13px">Error: ${e.message}</span>`;
+  }
+}
+
+function renderOportunidades(salesMap){
+  const searches=getFilteredEvents('search');
+  const views=getFilteredEvents('view');
+
+  // Rubros muy buscados
+  const rubroBusq={};
+  searches.forEach(e=>{if(e.d.rubro)rubroBusq[e.d.rubro]=(rubroBusq[e.d.rubro]||0)+1;});
+  views.forEach(e=>{if(e.d.rubro)rubroBusq[e.d.rubro]=(rubroBusq[e.d.rubro]||0)+1;});
+
+  // Rubros más vendidos
+  const rubroVentas=rankingData?rankingData.salesRubroMap:{};
+
+  const opps=[];
+
+  // Productos muy vistos y sin stock
+  const viewCount={};
+  views.forEach(e=>{if(e.d.codigo)viewCount[e.d.codigo]=(viewCount[e.d.codigo]||0)+1;});
+  Object.entries(viewCount).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([cod,cnt])=>{
+    const item=allData.find(x=>x.codigo===cod);
+    if(!item)return;
+    const totalStock=item.productos.reduce((s,p)=>s+p.stock,0);
+    if(totalStock===0){
+      opps.push({type:'alert',icon:'🚨',desc:`${item.descripcion.substring(0,45)}...`,meta:`${cnt} visitas · Sin stock`});
+    }
+  });
+
+  // Rubros muy buscados con pocas ventas
+  const topBusq=Object.entries(rubroBusq).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  topBusq.forEach(([rubro,busq])=>{
+    const ventas=rubroVentas[rubro]||0;
+    if(busq>=3&&ventas===0){
+      opps.push({type:'hot',icon:'🔥',desc:`Rubro "${rubro}" muy buscado`,meta:`${busq} consultas · 0 ventas registradas`});
+    }
+  });
+
+  // Top ventas sin búsquedas recientes
+  if(rankingData){
+    const topVentas=Object.entries(rankingData.salesMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    topVentas.forEach(([cod,qty])=>{
+      const item=allData.find(x=>x.codigo===cod);
+      if(!item)return;
+      const visto=viewCount[cod]||0;
+      if(qty>100&&visto===0){
+        opps.push({type:'ok',icon:'⭐',desc:`${item.descripcion.substring(0,45)}...`,meta:`${qty} uds vendidas · Sin visitas recientes → promover`});
+      }
+    });
+  }
+
+  const el=document.getElementById('dashOpps');
+  el.innerHTML=opps.length
+    ?opps.map(o=>`<div class="opp-item ${o.type}"><span class="opp-icon">${o.icon}</span><div class="opp-info"><div class="opp-desc">${esc(o.desc)}</div><div class="opp-meta">${esc(o.meta)}</div></div></div>`).join('')
+    :'<div style="color:var(--text-dim);font-size:13px;padding:12px 0">Sin oportunidades detectadas aún.<br>Necesitás más datos de navegación.</div>';
+}
+
 
 cargarDatos();
 </script>
