@@ -1920,35 +1920,60 @@ let rankingLoaded = false;
 
 async function loadRankingForTable(){
   if(rankingLoaded)return;
-  document.getElementById('rankingLoadingBadge').style.display='inline-flex';
+  const badge=document.getElementById('rankingLoadingBadge');
+  badge.style.display='inline-flex';
+  badge.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Cargando ventas...';
   try{
-    const revRows   = await fetchSheet('REV');
-    const rankRows  = await fetchSheet('RANKING');
-    // Mapa Código REV → Codigo_Equivalente
+    // Fetch REV y RANKING en paralelo
+    const [revText, rankText] = await Promise.all([
+      fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=REV`).then(r=>r.text()),
+      fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=RANKING`).then(r=>r.text())
+    ]);
+
+    // Parsear REV — usar filas crudas para control total de columnas
+    const revRaws = parseCSV(revText);
+    // REV: col0=Código, col4=Codigo_Equivalente
     const revToEquiv={};
-    for(const r of revRows){
-      const v=Object.values(r);
-      const cod=(v[0]||'').toString().trim();
-      const equiv=(v[4]||'').toString().trim();
+    for(let i=1;i<revRaws.length;i++){
+      const row=revRaws[i];
+      if(!row||row.length<5)continue;
+      const cod=(row[0]||'').trim();
+      const equiv=(row[4]||'').trim();
       if(cod&&equiv)revToEquiv[cod]=equiv;
     }
-    // Acumular ventas por codigo_equivalente
+
+    // Parsear RANKING — usar filas crudas
+    // RANKING: col0=Cod Articulo, col1=Cantidad
+    const rankRaws = parseCSV(rankText);
     salesByCode={};
-    for(const r of rankRows){
-      const v=Object.values(r);
-      const codArt=(v[0]||'').toString().trim();
-      const qty=parseInt(v[1])||0;
+    let matched=0, total=0;
+    for(let i=1;i<rankRaws.length;i++){
+      const row=rankRaws[i];
+      if(!row||row.length<2)continue;
+      const codArt=(row[0]||'').trim();
+      const qty=parseInt(row[1])||0;
+      if(!codArt||!qty)continue;
+      total++;
       const equiv=revToEquiv[codArt];
       if(!equiv)continue;
+      matched++;
       salesByCode[equiv]=(salesByCode[equiv]||0)+qty;
     }
+
+    console.log(`RANKING: ${total} items, ${matched} matched (${Math.round(matched/total*100)}%), ${Object.keys(salesByCode).length} códigos únicos`);
     rankingLoaded=true;
     renderVendTable();
     document.getElementById('vendToolbar').style.display='flex';
+    badge.textContent=`✓ ${Object.keys(salesByCode).length} productos con ventas`;
+    setTimeout(()=>badge.style.display='none', 3000);
+
   }catch(e){
-    console.warn('Ranking load error:',e);
+    console.error('Ranking load error:',e);
+    badge.textContent='⚠ Error cargando ventas: '+e.message;
+    badge.style.background='#fee2e2';
+    badge.style.color='#b91c1c';
+    setTimeout(()=>badge.style.display='none', 5000);
   }
-  document.getElementById('rankingLoadingBadge').style.display='none';
 }
 
 function getStockTotal(item){
