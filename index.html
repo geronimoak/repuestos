@@ -345,16 +345,17 @@ async function cargarDatos() {
   stepActive(3);
 
   // Agrupar REV por Codigo_Equivalente
+  // Columnas por posición: [0]=Código [2]=CantDisp [4]=Codigo_Equivalente [9]=Marca2
   const revMap = {};
   for (const r of rev) {
-    const key = (r['Codigo_Equivalente'] || r['Código'] || '').trim();
+    const vals = Object.values(r);
+    const codigoRev = (vals[0] || '').toString().trim();
+    const stock     = parseInt(vals[2]) || 0;
+    const key       = (vals[4] || '').toString().trim();
+    const marca2    = (vals[9] || '').toString().trim();
     if (!key) continue;
     if (!revMap[key]) revMap[key] = [];
-    const stock = parseInt(r['Cantidad Disponible']) || 0;
-    revMap[key].push({
-      codigo: (r['Código'] || '').trim(),
-      stock
-    });
+    revMap[key].push({ codigoRev, marca2, stock });
   }
 
   // Construir catálogo
@@ -395,12 +396,14 @@ async function recargarDatos() {
     const rev = await fetchSheet(SHEET_REV);
     const revMap = {};
     for (const r of rev) {
-      const key = (r['Codigo_Equivalente'] || r['Código'] || '').trim();
+      const vals = Object.values(r);
+      const codigoRev = (vals[0] || '').toString().trim();
+      const stock     = parseInt(vals[2]) || 0;
+      const key       = (vals[4] || '').toString().trim();
+      const marca2    = (vals[9] || '').toString().trim();
       if (!key) continue;
       if (!revMap[key]) revMap[key] = [];
-      const marca2Key = Object.keys(r).find(k => k.toLowerCase().replace(/\s/g,'') === 'marca2') || 'Marca2';
-      const codKey = Object.keys(r).find(k => k.toLowerCase().replace(/\s/g,'') === 'código') || 'Código';
-      revMap[key].push({ marca2: (r[marca2Key] || '').trim(), codigoRev: (r[codKey] || '').trim(), stock: parseInt(r['Cantidad Disponible']) || 0 });
+      revMap[key].push({ codigoRev, marca2, stock });
     }
     allData = indice.map(row => ({
       codigo: (row['Codigo'] || '').trim(),
