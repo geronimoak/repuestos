@@ -1162,16 +1162,7 @@ function applyVendFilter(){
 function renderVendTable(){
   const tbody=document.getElementById('vendBody');
   const slice=vendFiltered.slice(vendPage*PAGE_SIZE,(vendPage+1)*PAGE_SIZE);
-  // Debug: verificar primer match
-  if(rankingLoaded&&slice.length>0){
-    const sample=slice.find(x=>salesByCode[x.codigo]);
-    if(!sample&&slice.length>0){
-      // Verificar formato de keys
-      const firstKey=Object.keys(salesByCode)[0]||'';
-      const firstCod=slice[0].codigo||'';
-      console.log('salesByCode sample key:',firstKey,'| allData codigo sample:',firstCod);
-    }
-  }
+
   tbody.innerHTML='';
   slice.forEach(item=>{
     const tr=document.createElement('tr');tr.className='item-row';
@@ -1972,7 +1963,8 @@ async function loadRankingForTable(){
 
     console.log(`RANKING: ${total} items, ${matched} matched (${Math.round(matched/total*100)}%), ${Object.keys(salesByCode).length} códigos únicos`);
     rankingLoaded=true;
-    renderVendTable();
+    // Re-aplicar filtros para que vendFiltered esté actualizado y renderice con datos
+    applyVendFilter();
     document.getElementById('vendToolbar').style.display='flex';
     badge.textContent=`✓ ${Object.keys(salesByCode).length} productos con ventas`;
     setTimeout(()=>badge.style.display='none', 3000);
