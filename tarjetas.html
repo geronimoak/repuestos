@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Simulador de Cobros</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 40px;
+        color: #333;
+    }
+
+    .layout {
+        display: flex;
+        gap: 30px;
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    .col {
+        flex: 1;
+    }
+
+    .panel {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.12);
+    }
+
+    h2 {
+        text-align: center;
+        color: #d40000;
+        margin-bottom: 20px;
+        font-size: 26px;
+    }
+
+    label {
+        font-weight: bold;
+        margin-top: 12px;
+        display: block;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .resultado-box {
+        margin-top: 20px;
+        background: #f7f7f7;
+        border-radius: 10px;
+        padding: 15px;
+        border-left: 4px solid #d40000;
+    }
+
+    .fila {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 19px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .fila:last-child {
+        border-bottom: none;
+    }
+
+    .nota {
+        background: #fff3f3;
+        border-left: 4px solid #d40000;
+        padding: 18px;
+        border-radius: 8px;
+        font-size: 16px;
+        line-height: 1.6em;
+    }
+
+    .titulo-nota {
+        font-weight: bold;
+        color: #b00000;
+        margin-bottom: 6px;
+        font-size: 20px;
+    }
+
+    /* Diseño responsive */
+    @media (max-width: 850px) {
+        .layout {
+            flex-direction: column;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- COLUMNA IZQUIERDA: CALCULADORA -->
+    <div class="col">
+        <div class="panel">
+            <h2>Simulador de Cobros</h2>
+
+            <label>Monto NETO que querés recibir ($):</label>
+            <input type="number" id="monto" placeholder="Ej: 100" min="0" oninput="calcular()">
+
+            <div class="resultado-box">
+                <div class="fila">
+                    <span><b>1 pago:</b></span>
+                    <span id="p1">$0.00</span>
+                </div>
+
+                <div class="fila">
+                    <span><b>3 cuotas (PRECALCULAR – Visa/Master):</b></span>
+                    <span id="p3">$0.00</span>
+                </div>
+
+                <div class="fila">
+                    <span><b>6 cuotas (PRECALCULAR – Visa/Master):</b></span>
+                    <span id="p6">$0.00</span>
+                </div>
+
+                <div class="fila">
+                    <span><b>9 cuotas:</b></span>
+                    <span id="p9">Ingresar neto (POS calcula)</span>
+                </div>
+
+                <div class="fila">
+                    <span><b>12 cuotas:</b></span>
+                    <span id="p12">Ingresar neto (POS calcula)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: ACLARACIONES -->
+    <div class="col">
+        <div class="nota">
+            <div class="titulo-nota">📌 RESUMEN PARA VENDEDORES</div>
+
+            ✔ <b>1 pago</b> → ingresar NETO (sin recargo)<br>
+            ✔ <b>3 cuotas</b> → PRECALCULAR (solo Visa/Master)<br>
+            ✔ <b>6 cuotas</b> → PRECALCULAR (solo Visa/Master)<br>
+            ✔ <b>9 cuotas</b> → ingresar NETO (POS calcula todo)<br>
+            ✔ <b>12 cuotas</b> → ingresar NETO (POS calcula todo)<br><br>
+
+            🔶 <b>NARANJA CLÁSICA / NARANJA X / NARANJA VISA:</b><br>
+            ➜ El POS calcula automáticamente en TODOS los planes (1, 3, 6, 9, 12, Z).<br>
+            ➜ El vendedor debe ingresar SIEMPRE el <b>MONTO NETO</b> que quiere recibir.<br>
+            ➜ NO se precalcula nada para NARANJA.<br><br>
+
+            ⚠ Si el cliente cambia de opinión antes de pagar, <b>HAY QUE RECALCULAR</b>.<br>
+            ⚠ NO usar nunca el monto de 3 cuotas para 6 cuotas ni viceversa.<br>
+            ⚠ 9 y 12 cuotas SIEMPRE calculadas por el POS (no usar la calculadora).<br>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function calcular() {
+    let monto = parseFloat(document.getElementById("monto").value) || 0;
+
+    let m1 = 1.00;        // 1 pago
+    let m3 = 1.22085;     // 3 cuotas (PRECALCULAR Visa/Master)
+    let m6 = 1.36030;     // 6 cuotas (PRECALCULAR Visa/Master)
+
+    document.getElementById("p1").innerHTML = "$" + (monto * m1).toFixed(2);
+    document.getElementById("p3").innerHTML = "$" + (monto * m3).toFixed(2);
+    document.getElementById("p6").innerHTML = "$" + (monto * m6).toFixed(2);
+
+    document.getElementById("p9").innerHTML = "$" + monto.toFixed(2) + " (POS calcula)";
+    document.getElementById("p12").innerHTML = "$" + monto.toFixed(2) + " (POS calcula)";
+}
+</script>
+
+</body>
+</html>
