@@ -1,0 +1,43 @@
+
+╔══════════════════════════════════════════════════════════════╗
+║           I-REP — DEPLOY EN RAILWAY.APP                      ║
+╚══════════════════════════════════════════════════════════════╝
+
+PASO 1 — Subir archivos al repo GitHub (geronimoak/repuestos)
+─────────────────────────────────────────────────────────────
+Copiá los archivos de esta carpeta "deploy/" al repo local y hacé commit:
+
+  git add .
+  git commit -m "Deploy I-REP v3.0 - servidor Node.js"
+  git push origin main
+
+PASO 2 — Crear proyecto en Railway
+───────────────────────────────────
+1. railway.app/new → "Repositorio de GitHub"
+2. Seleccioná: geronimoak/repuestos
+3. Railway detecta Node.js automáticamente
+
+PASO 3 — Agregar variable de entorno (CRÍTICO)
+───────────────────────────────────────────────
+En Railway → tu proyecto → Variables → Nueva variable:
+
+  Nombre:  GOOGLE_CREDENTIALS_JSON
+  Valor:   (copiá exactamente el texto de abajo, todo en una línea)
+
+{"type": "service_account", "project_id": "mystic-gradient-373714", "private_key_id": "472ee25612697a98534d730d85c340cb49d33582", "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDdUqQxGdxtvDmg\nYi/DckWh6tQEXSt1By8A/KqpeTYGwTNue5jBzpa4hUG4F7p9+sy7IMVy77ilujWx\nyLvOHnKLOaXearzAqhJZ4hSgdLxJXMCtoUTB9lcqLbcFqVHHYRyL01JFmSUrU7zc\nmwR9JnNJqQiPDyIu3AuR5JzEBT5+3T6Yopfa0fdisGtH4/a2WnYik1t8vwy58p8V\nKvqmXsRplYURSwvGxVNFbxhLeW5YncPttshQ5hvVMVxToqJVWYgJptZp7IRIiWwf\nbI7FBZiGnRR/2vuJDsou+zx/6chIUD4OwtK1h1ial53q0jlq2j+c9iKPrnnMx1ZA\nHPkN11WDAgMBAAECggEAEVkV96dQSOW1GqY3mjlNzfhLMCBhdKXggFJNykTvAC6K\nqoFTovVfiQ0g7p4lhxRukchq0ayKq6rh5JKYbfqi/djB8KIrM2rhT1xSQ5WC4Lk9\nfR6j9hQqFutIalAwUdGB3E/vJfdwG2pP5nbcLjciWEbAnf4Qrt2epovl4dOLZ4Qo\nvBZHslEL4Wtc3AA+728dGqQ/NOJ4RbzJN6S5IU+TvIlHpBxR/S7INpmvgLmi1UrB\n+S+Qa9GzpSHke0Vvk0bFOtSGOoC1oZ9dyAG+698Mo/hK+O5kajlkDZEMK2ZK4La+\nBBIkDpkTaf2ux8+f6YCIL4cpdezdgVv5sFujaSfYMQKBgQD1AwxKhGqqU9I5E1sj\nIrLvK3Hic/x+haJdhBhyXhkJIeZHYR8znl4LMg7SbNM0gcQov3TZtfLa18JOuIXy\nwnZRnNedP9OxE11ZtDW7h3wSNwxlKXaaB5lRSrfXdK+ymbo9RnpkgsZH3V37RAUC\nQEy/vSYSFm5NG8Vo5HwMginj+QKBgQDnP58u9WN0NG5agNNulAA0s2NckngLhyK1\nqOVxgZjA59oW/0K2pNoH3qf6zGcoTRPy/fDrsh39H6SxwLEARS2j4a8G+s6dXq83\nYJ97M6vijbZQF66d+V7VYvzK1WHwQYRgBoS5T9nVIjwjcwDbnSZoTK8TD4kPoHBC\nKOF4pAisWwKBgQCWskI8DwfgLWAOtOYITU5LJqiMRRSW6TC9XgL/TPsPD+eoHYdo\nY06qiiZtrHuXPv1cpq2DPpLZoX0kl//jGVJWziYb1OcqcaOoCdxGtIVOWsdn7UHC\naUwWoONERMPQERdomtGqwnicOP6WDfcatFvATuF8nIlJKfyYkHfv5ZtIWQKBgQCH\n8l8ivCA7sJcvnYyu9VMpqExBn9ny7P76zNAWapnizmroGiieN0v2VG9sgb4jcyzH\nLYL1DUGUDYZE+YMVJZYvQf4jnE7bNU7Mv4ECbN4f0i/b5hBBzthxmkAC/m8VT28D\nBNICH29wXS/9px5Z/YkWx/4ktn1dMnTMcDwdMFHpAQKBgQCB7F4T15nfQryDTPjr\n6Rt9L6aupaXVSHNuQrBSMPLVErT+DwdzTCjP7IMdrwcUvs3Oj792IN0/CyJGFs5y\ndLzU0ENFgeuj+5oeTO6FwKoh2NrQnxuwrFB8DySzL1i6d0zYe9RtbP3QFALM71qi\nycfFvm51lju1QZRg5Qrj9H285Q==\n-----END PRIVATE KEY-----\n", "client_email": "irep-sheets@mystic-gradient-373714.iam.gserviceaccount.com", "client_id": "107289307506186492549", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/irep-sheets%40mystic-gradient-373714.iam.gserviceaccount.com", "universe_domain": "googleapis.com"}
+
+PASO 4 — Deploy automático
+───────────────────────────
+Railway deploya solo. En ~2 minutos tenés una URL pública tipo:
+  https://repuestos-production.up.railway.app
+
+PASO 5 — Verificar
+───────────────────
+Abrí: https://tu-url.railway.app/api/status
+Debe responder: {"ok":true,...}
+
+NOTAS IMPORTANTES:
+- credentials.json NO debe estar en GitHub (.gitignore ya lo excluye)
+- public/data.js, ventas.js, motor.js tampoco van (son viejos y pesados)
+- El servidor lee todo de Google Sheets en tiempo real
+- Cada push a main redeploya automáticamente

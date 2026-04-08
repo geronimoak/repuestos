@@ -1,0 +1,18 @@
+# Secretos — nunca subir
+credentials.json
+
+# Archivos estáticos grandes (ya no necesarios, vienen del servidor)
+public/data.js
+public/ventas.js
+public/motor.js
+public/analytics.js
+public/cap.js
+
+# Node
+node_modules/
+npm-debug.log*
+.env
+
+# OS
+.DS_Store
+Thumbs.db
