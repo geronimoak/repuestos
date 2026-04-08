@@ -10,7 +10,7 @@
 <body>
 
 <div id="topbar">
-  <div class="tb-logo" style="display:flex;align-items:center;gap:6px;padding:0 4px;flex-shrink:0"><img src="logo.png" alt="Internacional" style="height:26px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(232,24,14,.35))"><span class="ver" style="font-size:8px;opacity:.5">HUD</span></div>
+  <div class="tb-logo">I·REP<span class="ver">HUD</span></div>
   <nav class="tb-nav">
     <button class="tb-tab active" data-page="hud" onclick="goPage('hud',this)">⬡ HUD</button>
     <button class="tb-tab" data-page="catalog" onclick="goPage('catalog',this)">
@@ -40,7 +40,7 @@
     <div class="tb-pill red"><strong id="hdrAlerta">—</strong> sin stock</div>
     <span style="font-size:9px;color:var(--muted);font-family:var(--mono)" id="syncTs"></span>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
-    <button class="sync-btn" onclick="forceRefresh()" title="Sincronizar con Google Sheets">↺</button>
+    <button class="sync-btn" onclick="forceRefresh()">↺</button>
   </div>
 </div>
 
@@ -157,7 +157,8 @@
         <button onclick="chipFilter(this,'camino')"    class="chip">🚚 En camino</button>
       </div>
       <input type="hidden" id="cartEstadoF" value="">
-      <input type="text" id="cartSearch" class="fsel" placeholder="Buscar…" oninput="cartSearchDebounce()" style="flex:1;min-width:120px">
+      <input type="text" id="cartSearch" class="fsel" placeholder="Buscar…" oninput="cartPage=0;renderCart()" style="flex:1;min-width:120px">
+      <button class="btn-g" id="kanbanBtn" onclick="toggleKanban()" style="padding:6px 10px;font-size:10px">⊞ Kanban</button>
       <button class="btn-g" onclick="exportCart()" style="padding:6px 10px;font-size:10px">↓ CSV</button>
     </div>
     <div id="tableView">
@@ -233,8 +234,7 @@
 
 <!-- LOADER -->
 <div id="loader">
-  <img src="logo.png" alt="Internacional" style="height:60px;object-fit:contain;filter:drop-shadow(0 0 20px rgba(232,24,14,.4));margin-bottom:8px">
-  <div class="ld-logo"></div>
+  <div class="ld-logo">I·REP</div>
   <div class="ld-dots"><div class="ld-dot"></div><div class="ld-dot"></div><div class="ld-dot"></div></div>
   <div class="ld-msg" id="ldMsg">Iniciando HUD…</div>
 </div>

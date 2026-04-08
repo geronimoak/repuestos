@@ -104,6 +104,9 @@ function updateStreak(){
   if(el) el.textContent=streak.days>0?'🔥 '+streak.days+'d racha':'—';
 }
 
+
+function toggleTheme(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('irep_theme',n);const b=document.getElementById('themeBtn');if(b)b.textContent=n==='light'?'☀️':'🌙';}
+function initTheme(){const s=localStorage.getItem('irep_theme')||'dark';document.documentElement.setAttribute('data-theme',s);const b=document.getElementById('themeBtn');if(b)b.textContent=s==='light'?'☀️':'🌙';}
 function initUI(){
   const rs=[...new Set(CATALOG.map(x=>x.r).filter(Boolean))].sort();
   ['rubroF','rkRubroF'].forEach(id=>{
@@ -130,7 +133,7 @@ function goPage(id,btn){
       +'<div style="width:40px;height:40px;border:3px solid var(--b);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite"></div>'
       +'<div style="font-size:12px">Cargando motor de decisión...</div></div>';
     if(!window._MOTOR){
-      fetch(SERVER+'/api/motor').then(r=>r.json()).then(d=>{if(d.ok){window._MOTOR=d.motor;console.log('[motor]',d.motor.length,'loaded');renderMotor();}else if(mc)mc.innerHTML='<div style="padding:40px;text-align:center;color:var(--red)">Error Motor</div>';}).catch(e=>{if(mc)mc.innerHTML='<div style="padding:40px;text-align:center;color:var(--red)">Sin conexion: '+e.message+'</div>';});
+      fetch(SERVER+'/api/motor').then(r=>r.json()).then(d=>{if(d.ok){window._MOTOR=d.motor;console.log('[motor]',d.motor.length,'loaded');renderMotor();}else if(mc)mc.innerHTML='<div style="padding:40px;color:var(--red)">Error Motor</div>';}).catch(e=>{if(mc)mc.innerHTML='<div style="padding:40px;color:var(--red)">Sin conexion</div>';});
     } else { setTimeout(renderMotor,20); }
   }
   closeDP();
