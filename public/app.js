@@ -1,7 +1,7 @@
 // I-REP HUD — app.js v4
 'use strict';
 
-const SERVER = 'http://localhost:3000';
+const SERVER=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3000':window.location.origin;
 let CATALOG=[], RUBROS=[], CART=[], MET={}, IMG_MAP={};
 let cartFiltered=[], cartPage=0, cartIdCtr=0, currentItem=null, searchTimer=null;
 const CART_PG = 50;
