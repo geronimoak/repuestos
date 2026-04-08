@@ -23,33 +23,24 @@ const ACHS = [
 ];
 
 window.addEventListener('DOMContentLoaded', async () => {
-  setLd('Conectando con Google Sheets…');
+  setLd('Conectando...');
   try {
-    setLd('Cargando catálogo…');
-    await loadData();
-    setLd('Cargando carrito…');
-    await loadProceso();
+    await Promise.all([loadData(), loadProceso()]);
     loadImages().catch(e => console.warn('[images]', e.message));
   } catch(e) {
     console.warn('[irep] offline:', e.message);
     CATALOG=window._CAT||[]; RUBROS=window._RUB||[]; MET=window._MET||{};
     let id=0; CART=(window._PROC||[]).map(p=>({...p,_id:id++,estado:calcE(p)}));
-    if(CATALOG.length===0){
-      setLd('Sin conexión — verificá que node server.js esté corriendo');
-      document.querySelector('#loader .ld-dots').style.display='none';
-      return;
-    }
-    notify('Modo sin conexión','warn');
+    notify('Modo offline','warn');
   }
-  setLd('Iniciando…');
   hideLd(); initUI(); updateStreak();
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDP(); });
-  setTimeout(()=>{ if(typeof loadNovedades==='function') loadNovedades(); }, 1500);
+  // Background: preload novedades badge
+  setTimeout(()=>{ if(typeof loadNovedades==='function') loadNovedades(); }, 2500);
   // Lazy load ventas.js after UI is ready
   if(!window._VS){
     setTimeout(()=>{
-      const s=document.createElement('script'); s.src='ventas.js';
-      s.onload=()=>console.log('[ventas] loaded'); document.head.appendChild(s);
+      fetch(SERVER+'/api/ventas').then(r=>r.json()).then(d=>{if(d.ok){window._VS=d.vs;console.log('[ventas]',Object.keys(d.vs).length,'loaded');}}).catch(e=>console.warn('[ventas]',e.message));
     }, 800);
   }
 });
@@ -113,6 +104,9 @@ function updateStreak(){
   if(el) el.textContent=streak.days>0?'🔥 '+streak.days+'d racha':'—';
 }
 
+
+function toggleTheme(){const h=document.documentElement,n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('irep_theme',n);const b=document.getElementById('themeBtn');if(b)b.textContent=n==='light'?'☀️':'🌙';}
+function initTheme(){const s=localStorage.getItem('irep_theme')||'dark';document.documentElement.setAttribute('data-theme',s);const b=document.getElementById('themeBtn');if(b)b.textContent=s==='light'?'☀️':'🌙';}
 function initUI(){
   const rs=[...new Set(CATALOG.map(x=>x.r).filter(Boolean))].sort();
   ['rubroF','rkRubroF'].forEach(id=>{
@@ -139,9 +133,7 @@ function goPage(id,btn){
       +'<div style="width:40px;height:40px;border:3px solid var(--b);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite"></div>'
       +'<div style="font-size:12px">Cargando motor de decisión...</div></div>';
     if(!window._MOTOR){
-      const s=document.createElement('script'); s.src='motor.js';
-      s.onload=()=>setTimeout(renderMotor,50);
-      document.head.appendChild(s);
+      fetch(SERVER+'/api/motor').then(r=>r.json()).then(d=>{if(d.ok){window._MOTOR=d.motor;console.log('[motor]',d.motor.length,'loaded');renderMotor();}else if(mc)mc.innerHTML='<div style="padding:40px;color:var(--red)">Error Motor</div>';}).catch(e=>{if(mc)mc.innerHTML='<div style="padding:40px;color:var(--red)">Sin conexion</div>';});
     } else { setTimeout(renderMotor,20); }
   }
   closeDP();

@@ -57,9 +57,13 @@ function renderAnalytics() {
       + '<div>Cargando datos de ventas...</div></div>';
     if (!window._anaLoading) {
       window._anaLoading = true;
-      const s = document.createElement('script'); s.src = 'analytics.js';
-      s.onload = () => { window._anaLoading = false; renderAnalytics(); };
-      document.head.appendChild(s);
+      fetch(SERVER+'/api/analytics')
+        .then(r=>r.json())
+        .then(d=>{
+          if(d.ok){ window.ANA=d; window._anaLoading=false; renderAnalytics(); }
+          else { window._anaLoading=false; console.warn('[analytics]',d.error); }
+        })
+        .catch(e=>{ window._anaLoading=false; console.warn('[analytics]',e.message); });
     }
     return;
   }
