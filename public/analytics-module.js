@@ -60,7 +60,7 @@ function renderAnalytics() {
       fetch(SERVER+'/api/analytics')
         .then(r=>r.json())
         .then(d=>{
-          if(d.ok){ window.ANA=d; window._anaLoading=false; renderAnalytics(); }
+          if(d.ok){ window._ANA=d; window._anaLoading=false; renderAnalytics(); }
           else { window._anaLoading=false; console.warn('[analytics]',d.error); }
         })
         .catch(e=>{ window._anaLoading=false; console.warn('[analytics]',e.message); });
