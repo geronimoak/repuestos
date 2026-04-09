@@ -470,26 +470,29 @@ app.get('/api/analytics', async (req, res) => {
     }
 
     const cleanNum = s => parseFloat((s||'0').replace(',','.')) || 0;
-  // Parse DD-MM-YYYY or YYYY-MM-DD or DD/MM/YYYY dates from Sheet
+  // Parse Excel serial numbers or date strings from Google Sheets
+  const _excelEpoch = new Date(1899, 11, 30).getTime(); // Dec 30 1899
   const parseDate = s => {
-    if (!s) return null;
+    if (!s && s !== 0) return null;
+    // Excel/Sheets serial number (e.g. 44930 = 2023-01-04)
+    const n = Number(s);
+    if (!isNaN(n) && n > 40000 && n < 55000) {
+      // Valid range: ~2009 to ~2050
+      const dt = new Date(_excelEpoch + n * 86400000);
+      return isNaN(dt) ? null : dt;
+    }
+    // String date formats
     const str = String(s).trim();
-    // Try DD-MM-YYYY or DD/MM/YYYY
+    // DD-MM-YYYY or DD/MM/YYYY
     const m1 = str.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
     if (m1) {
       const [,d,mo,y] = m1;
       const dt = new Date(+y, +mo-1, +d);
       return isNaN(dt) ? null : dt;
     }
-    // Try YYYY-MM-DD
-    const m2 = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (m2) {
-      const dt = new Date(str);
-      return isNaN(dt) ? null : dt;
-    }
-    // Fallback
+    // YYYY-MM-DD or fallback
     const dt = new Date(str);
-    return isNaN(dt) ? null : dt;
+    return (!dt || isNaN(dt)) ? null : dt;
   };
     const rows = [];
     const lastCostByCod = {};
@@ -796,26 +799,29 @@ app.get('/api/capitalizacion', async (req, res) => {
     const ventasRows = ventasD.values || [];
 
     const cleanNum = s => parseFloat((s||'0').replace(',','.')) || 0;
-  // Parse DD-MM-YYYY or YYYY-MM-DD or DD/MM/YYYY dates from Sheet
+  // Parse Excel serial numbers or date strings from Google Sheets
+  const _excelEpoch = new Date(1899, 11, 30).getTime(); // Dec 30 1899
   const parseDate = s => {
-    if (!s) return null;
+    if (!s && s !== 0) return null;
+    // Excel/Sheets serial number (e.g. 44930 = 2023-01-04)
+    const n = Number(s);
+    if (!isNaN(n) && n > 40000 && n < 55000) {
+      // Valid range: ~2009 to ~2050
+      const dt = new Date(_excelEpoch + n * 86400000);
+      return isNaN(dt) ? null : dt;
+    }
+    // String date formats
     const str = String(s).trim();
-    // Try DD-MM-YYYY or DD/MM/YYYY
+    // DD-MM-YYYY or DD/MM/YYYY
     const m1 = str.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
     if (m1) {
       const [,d,mo,y] = m1;
       const dt = new Date(+y, +mo-1, +d);
       return isNaN(dt) ? null : dt;
     }
-    // Try YYYY-MM-DD
-    const m2 = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (m2) {
-      const dt = new Date(str);
-      return isNaN(dt) ? null : dt;
-    }
-    // Fallback
+    // YYYY-MM-DD or fallback
     const dt = new Date(str);
-    return isNaN(dt) ? null : dt;
+    return (!dt || isNaN(dt)) ? null : dt;
   };
 
     // Build REV data: cod → { stk, precio, irep, rubro }
