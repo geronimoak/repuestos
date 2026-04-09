@@ -519,7 +519,8 @@ app.get('/api/analytics', async (req, res) => {
     }
 
     console.log(`[analytics] ${rows.length} rows in ${Date.now()-t0}ms`);
-    const months = [...new Set(rows.map(r=>r.mes))].sort();
+    const _nowMonth = new Date().toISOString().slice(0,7);
+    const months = [...new Set(rows.map(r=>r.mes))].sort().filter(m=>m<=_nowMonth);
     const last3=months.slice(-3), prev3=months.slice(-6,-3), last6=months.slice(-6), last12=months.slice(-12);
     const totalRev = rows.reduce((a,r)=>a+r.revenue,0);
     const sum = (arr,k) => arr.reduce((a,r)=>a+(r[k]||0),0);
@@ -622,7 +623,8 @@ app.get('/api/novedades', async (req, res) => {
         const margin=(cf.c>0&&pr>0&&pr>cf.c*0.1)?Math.min(95,Math.max(0,(pr-cf.c)/pr*100)):null;
         rows.push({ fecha:dt, mes:dt.toISOString().slice(0,7), cliente:(cliente||'').trim(), vendedor:(vendedor||'').trim(), cod, irep:rev2irep[cod]||null, rubro:rev2irep[cod]?rev2irep[cod].split('-').slice(0,-1).join('-'):null, qty, precio:pr, costo_f:cf.c, revenue:qty*pr, margin, profit:cf.c>0?Math.max(0,(pr-cf.c)*qty):0 });
       }
-      const months=[...new Set(rows.map(r=>r.mes))].sort();
+      const _nowMonth2=new Date().toISOString().slice(0,7);
+      const months=[...new Set(rows.map(r=>r.mes))].sort().filter(m=>m<=_nowMonth2);
       const last3=months.slice(-3),prev3=months.slice(-6,-3),last6=months.slice(-6);
       const totalRev=rows.reduce((a,r)=>a+r.revenue,0);
       const sum=(arr,k)=>arr.reduce((a,r)=>a+(r[k]||0),0);
@@ -1090,7 +1092,8 @@ app.get('/api/motor', async (req, res) => {
         if (!byIrep[irep]) byIrep[irep] = { tot:0, l3:0, p3:0, byMonth:{} };
         byIrep[irep].tot += qty; byIrep[irep].byMonth[mes] = (byIrep[irep].byMonth[mes]||0)+qty;
       });
-      const allMonths=[...months].sort(), totalMonths=Math.max(allMonths.length,1);
+      const _nowM=new Date().toISOString().slice(0,7);
+    const allMonths=[...months].sort().filter(m=>m<=_nowM), totalMonths=Math.max(allMonths.length,1);
       const last3=new Set(allMonths.slice(-3)), prev3=new Set(allMonths.slice(-6,-3));
       vsData={};
       Object.entries(byIrep).forEach(([irep,d])=>{
