@@ -61,7 +61,7 @@ async function loadImages(){
   const r=await fetch(SERVER+'/api/images',{signal:AbortSignal.timeout(45000)});
   if(!r.ok) return;
   const d=await r.json();
-  if(d.ok&&d.map){ IMG_MAP=d.map; console.log('[images] '+d.count+' loaded'); injectImages(); }
+  if(d.ok&&d.map){ IMG_MAP=d.map; console.log('[images] '+d.count+' loaded'); injectImages(); if(typeof renderFlash==='function'&&_flashProducts&&_flashProducts.length===0) renderFlash(); }
 }
 function imgUrl(path){ return path?(IMG_MAP[path]||''):''; }
 function injectImages(){
