@@ -18,7 +18,7 @@ const fs      = require('fs');
 const { GoogleAuth } = require('google-auth-library');
 
 const app  = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -61,7 +61,7 @@ async function sheetsRequest(method, url, body=null) {
 }
 
 const CONFIG = {
-  GOOGLE_API_KEY : 'AIzaSyCfl0H5PUBE1p8sjllbyuz-whBXI15lI-U',
+  GOOGLE_API_KEY : process.env.GOOGLE_API_KEY || 'AIzaSyCfl0H5PUBE1p8sjllbyuz-whBXI15lI-U',
   SHEET_ID       : '1iJ1uFFqL5bTMGgLY1TXUuoObwa9MY0yJ9sYhuSJ5mE4',
 
   // GIDs de cada hoja
@@ -82,7 +82,7 @@ const CONFIG = {
   },
 
   // GitHub (para deploy del HTML)
-  GITHUB_TOKEN  : process.env.GITHUB_TOKEN,
+  GITHUB_TOKEN  : process.env.GITHUB_TOKEN || '',
   GITHUB_USER   : 'geronimoak',
   GITHUB_REPO   : 'repuestos',
   GITHUB_BRANCH : 'main',
@@ -470,6 +470,27 @@ app.get('/api/analytics', async (req, res) => {
     }
 
     const cleanNum = s => parseFloat((s||'0').replace(',','.')) || 0;
+  // Parse DD-MM-YYYY or YYYY-MM-DD or DD/MM/YYYY dates from Sheet
+  const parseDate = s => {
+    if (!s) return null;
+    const str = String(s).trim();
+    // Try DD-MM-YYYY or DD/MM/YYYY
+    const m1 = str.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+    if (m1) {
+      const [,d,mo,y] = m1;
+      const dt = new Date(+y, +mo-1, +d);
+      return isNaN(dt) ? null : dt;
+    }
+    // Try YYYY-MM-DD
+    const m2 = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m2) {
+      const dt = new Date(str);
+      return isNaN(dt) ? null : dt;
+    }
+    // Fallback
+    const dt = new Date(str);
+    return isNaN(dt) ? null : dt;
+  };
     const rows = [];
     const lastCostByCod = {};
 
@@ -479,7 +500,7 @@ app.get('/api/analytics', async (req, res) => {
       const qty = cleanNum(cant); if (qty <= 0) continue;
       const pr  = cleanNum(precio);
       const co  = cleanNum(costo);
-      const dt  = new Date(fecha);
+      const dt = parseDate(fecha);
       if (isNaN(dt)) continue;
       const cod = cod_art.trim();
       if (co > 0) lastCostByCod[cod] = { c: co, d: fecha.slice(0,10) };
@@ -593,7 +614,7 @@ app.get('/api/novedades', async (req, res) => {
         const [fecha,cliente,vendedor,cod_art,desc,cant,precio,costo]=(vD.values||[])[i];
         if(!fecha||!cod_art) continue;
         const qty=cleanNum(cant); if(qty<=0) continue;
-        const pr=cleanNum(precio), co=cleanNum(costo), dt=new Date(fecha);
+        const pr=cleanNum(precio), co=cleanNum(costo), dt=parseDate(fecha);
         if(isNaN(dt)) continue;
         const cod=cod_art.trim();
         if(co>0) lastCostByCod[cod]={c:co,d:fecha.slice(0,10)};
@@ -773,6 +794,27 @@ app.get('/api/capitalizacion', async (req, res) => {
     const ventasRows = ventasD.values || [];
 
     const cleanNum = s => parseFloat((s||'0').replace(',','.')) || 0;
+  // Parse DD-MM-YYYY or YYYY-MM-DD or DD/MM/YYYY dates from Sheet
+  const parseDate = s => {
+    if (!s) return null;
+    const str = String(s).trim();
+    // Try DD-MM-YYYY or DD/MM/YYYY
+    const m1 = str.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+    if (m1) {
+      const [,d,mo,y] = m1;
+      const dt = new Date(+y, +mo-1, +d);
+      return isNaN(dt) ? null : dt;
+    }
+    // Try YYYY-MM-DD
+    const m2 = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m2) {
+      const dt = new Date(str);
+      return isNaN(dt) ? null : dt;
+    }
+    // Fallback
+    const dt = new Date(str);
+    return isNaN(dt) ? null : dt;
+  };
 
     // Build REV data: cod → { stk, precio, irep, rubro }
     // REV cols: Código, Descripción, Cantidad Disponible, Equivalencia, Codigo_Equivalente, RUBRO, IMAGEN, PRECIO INTERNACIONAL, MARCA, Marca
@@ -818,7 +860,7 @@ app.get('/api/capitalizacion', async (req, res) => {
     for (const r of ventasRows.slice(1)) {
       const [fecha,,, cod_art,,cant] = r;
       if (!fecha||!cod_art) continue;
-      const dt = new Date(fecha); if (isNaN(dt)) continue;
+      const dt = parseDate(fecha); if (!dt) continue;
       const mes = dt.toISOString().slice(0,7);
       months.add(mes);
       const irep = revToIrep[(cod_art||'').trim()];
@@ -968,7 +1010,7 @@ app.get('/api/ventas', async (req, res) => {
       if (!irep) return;
       const qty  = toNum(row['Cantidad']);
       if (qty <= 0) return;
-      const dt   = new Date(row['Fecha']);
+      const dt = parseDate(row['Fecha']);
       if (isNaN(dt)) return;
       const mes  = dt.toISOString().slice(0, 7);
       months.add(mes);
@@ -1043,7 +1085,7 @@ app.get('/api/motor', async (req, res) => {
         const cod = clean(row['Cod Articulo']), irep = cod ? rev2irep[cod] : null;
         if (!irep) return;
         const qty = toNum(row['Cantidad']); if (qty <= 0) return;
-        const dt = new Date(row['Fecha']); if (isNaN(dt)) return;
+        const dt = parseDate(row['Fecha']); if (isNaN(dt)) return;
         const mes = dt.toISOString().slice(0,7); months.add(mes);
         if (!byIrep[irep]) byIrep[irep] = { tot:0, l3:0, p3:0, byMonth:{} };
         byIrep[irep].tot += qty; byIrep[irep].byMonth[mes] = (byIrep[irep].byMonth[mes]||0)+qty;
