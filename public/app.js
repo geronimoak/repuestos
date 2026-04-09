@@ -127,6 +127,17 @@ function goPage(id,btn){
   if(id==='analytics'){ if(typeof renderAnalytics==='function') renderAnalytics(); }
   if(id==='novedades'){  if(typeof renderNovedades==='function') renderNovedades(); }
   if(id==='cap'){ if(!_capData&&typeof loadCap==='function') loadCap(); else if(typeof renderCap==='function') renderCap(); }
+  if(id==='flash'){
+    if(typeof renderFlash==='function'){
+      if(!window._MOTOR){
+        const mc2=document.getElementById('flashContainer');
+        if(mc2) mc2.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--muted)"><div style="width:32px;height:32px;border:3px solid var(--b);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite"></div><span style="font-size:12px">Cargando motor…</span></div>';
+        fetch(SERVER+'/api/motor').then(r=>r.json()).then(d=>{
+          if(d.ok){ window._MOTOR=d.motor; renderFlash(); }
+        }).catch(()=>renderFlash());
+      } else { renderFlash(); }
+    }
+  }
   if(id==='motor'){
     const mc=document.getElementById('motorContainer');
     if(mc) mc.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;color:var(--muted)">'
