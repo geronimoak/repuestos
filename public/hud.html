@@ -26,7 +26,6 @@
     <button class="tb-tab" data-page="motor" onclick="goPage('motor',this)">🧠 Motor</button>
     <button class="tb-tab" data-page="analytics" onclick="goPage('analytics',this)">📊 Stats</button>
     <button class="tb-tab" data-page="cap" onclick="goPage('cap',this)">💼 Cap.</button>
-    <button class="tb-tab" data-page="flash" onclick="goPage('flash',this)">⚡ Flash</button>
     <button class="tb-tab" data-page="cotizador" onclick="goPageCot(this)">
       💰 Cotizar <span class="cart-badge" id="cotBadge" style="display:none">0</span>
     </button>
@@ -207,12 +206,7 @@
     <div id="capContainer" style="flex:1;display:flex;flex-direction:column;overflow:hidden"></div>
   </div>
 
-    <!-- FLASH VENTAS 360 -->
-  <div id="p-flash" class="page" style="flex-direction:column;overflow:hidden">
-    <div id="flashContainer" style="flex:1;display:flex;flex-direction:column;overflow:hidden"></div>
-  </div>
-
-  <!-- COTIZADOR -->
+    <!-- COTIZADOR -->
   <div id="p-cotizador" class="page">
     <div id="cotContainer"></div>
   </div>
@@ -250,7 +244,6 @@
 <script src="analytics-module.js"></script>
 <script src="novedades-module.js"></script>
 <script src="cap-module.js"></script>
-<script src="flash-module.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
