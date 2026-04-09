@@ -2,7 +2,7 @@
 'use strict';
 
 const SERVER=(location.hostname==='localhost'||location.hostname==='127.0.0.1')?'http://localhost:3000':window.location.origin;
-let CATALOG=[], RUBROS=[], CART=[], MET={}, IMG_MAP={};
+let CATALOG=[], RUBROS=[], CART=[], MET={}, IMG_MAP={}; window.IMG_MAP=IMG_MAP;
 let cartFiltered=[], cartPage=0, cartIdCtr=0, currentItem=null, searchTimer=null;
 const CART_PG = 50;
 let activeRubro=null, shelfSort='urgency', shelfLinea='', shelfItems=[];
@@ -61,7 +61,7 @@ async function loadImages(){
   const r=await fetch(SERVER+'/api/images',{signal:AbortSignal.timeout(45000)});
   if(!r.ok) return;
   const d=await r.json();
-  if(d.ok&&d.map){ IMG_MAP=d.map; console.log('[images] '+d.count+' loaded'); injectImages(); if(typeof renderFlash==='function'&&_flashProducts&&_flashProducts.length===0) renderFlash(); }
+  if(d.ok&&d.map){ IMG_MAP=d.map; window.IMG_MAP=d.map; console.log('[images] '+d.count+' loaded'); injectImages(); if(typeof renderFlash==='function'&&_flashProducts!==null&&_flashProducts.length===0) renderFlash(); }
 }
 function imgUrl(path){ return path?(IMG_MAP[path]||''):''; }
 function injectImages(){
