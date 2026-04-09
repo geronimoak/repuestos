@@ -486,8 +486,14 @@ app.get('/api/analytics', async (req, res) => {
     // DD-MM-YYYY or DD/MM/YYYY
     const m1 = str.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
     if (m1) {
-      const [,d,mo,y] = m1;
-      const dt = new Date(+y, +mo-1, +d);
+      const [,part1,part2,y] = m1;
+      // Try DD-MM-YYYY first
+      let dt = new Date(+y, +part2-1, +part1);
+      // If future, try MM-DD-YYYY (swapped)
+      if (!isNaN(dt) && dt > new Date()) {
+        const dtSwap = new Date(+y, +part1-1, +part2);
+        if (!isNaN(dtSwap) && dtSwap <= new Date()) dt = dtSwap;
+      }
       return isNaN(dt) ? null : dt;
     }
     // YYYY-MM-DD or fallback
@@ -815,8 +821,14 @@ app.get('/api/capitalizacion', async (req, res) => {
     // DD-MM-YYYY or DD/MM/YYYY
     const m1 = str.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
     if (m1) {
-      const [,d,mo,y] = m1;
-      const dt = new Date(+y, +mo-1, +d);
+      const [,part1,part2,y] = m1;
+      // Try DD-MM-YYYY first
+      let dt = new Date(+y, +part2-1, +part1);
+      // If future, try MM-DD-YYYY (swapped)
+      if (!isNaN(dt) && dt > new Date()) {
+        const dtSwap = new Date(+y, +part1-1, +part2);
+        if (!isNaN(dtSwap) && dtSwap <= new Date()) dt = dtSwap;
+      }
       return isNaN(dt) ? null : dt;
     }
     // YYYY-MM-DD or fallback
@@ -845,7 +857,7 @@ app.get('/api/capitalizacion', async (req, res) => {
 
     // Extract last known cost per REV cod from VENTAS (fill-forward)
     const lastCostByCod = {};
-    const ventasRows_sorted = [...ventasRows.slice(1)].sort((a,b) => new Date(a[0]) - new Date(b[0]));
+    const ventasRows_sorted = [...ventasRows.slice(1)].sort((a,b) => (parseDate(a[0])||0) - (parseDate(b[0])||0));
     for (const r of ventasRows_sorted) {
       const [fecha,,, cod_art,,,, costo] = r;
       const co = cleanNum(costo);
