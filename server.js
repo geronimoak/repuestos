@@ -1321,7 +1321,17 @@ app.get('/api/status', (req, res) => {
 });
 
 /** Servir el frontend */
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js') || filePath.endsWith('.html') || filePath.endsWith('.css')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
 app.get('/', (req, res) => {
   const f = path.join(__dirname, 'public', 'index.html');
   if (fs.existsSync(f)) res.sendFile(f);
