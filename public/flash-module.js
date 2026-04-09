@@ -50,6 +50,13 @@ function flashScore(item,maxRhy,maxRnk){
 function flashSelectProducts(){
   const motor=window._MOTOR||[];
   if(!motor.length) return [];
+  // If IMG_MAP not loaded yet, trigger load and return empty (will re-render on load)
+  if(!window.IMG_MAP||Object.keys(window.IMG_MAP).length===0){
+    if(typeof loadImages==='function'){
+      loadImages().then(()=>{ _flashProducts=null; renderFlash(); });
+    }
+    return [];
+  }
   const recent=flashRecentCodes(5);
   const maxRhy=Math.max(...motor.map(x=>x.rhy||0),1);
   const maxRnk=Math.max(...motor.map(x=>x.rnk||0),1);
@@ -94,6 +101,15 @@ function renderFlash(){
 function renderFlashSelector(cont){
   _flashProducts=flashSelectProducts();
   const today=new Date().toISOString().slice(0,10);
+  if(!_flashProducts||_flashProducts.length===0){
+    const imgCount=Object.keys(window.IMG_MAP||{}).length;
+    cont.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;color:var(--muted)">'
+      +(imgCount===0
+        ?'<div style="width:44px;height:44px;border:3px solid var(--b);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite"></div><div style="font-size:12px">Cargando imágenes ('+Object.keys(window.IMG_MAP||{}).length+'/14328)…</div>'
+        :'<div style="font-size:24px">📭</div><div style="font-size:12px">Sin productos disponibles</div><button onclick="flashRegenerate()" style="padding:6px 16px;border-radius:6px;background:rgba(232,24,14,.15);border:1px solid var(--cyan);color:var(--cyan);font-size:11px;cursor:pointer">↺ Reintentar</button>')
+      +'</div>';
+    return;
+  }
   const catCounts={U:0,L:0,O:0,G:0};
   _flashProducts.forEach(p=>catCounts[p.cat]++);
 
